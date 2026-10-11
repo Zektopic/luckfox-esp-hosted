@@ -1,0 +1,18 @@
+== host mmc2: , timing spec: 2 (sd high-speed)
+== sdio: SDIO_ID=0092:6666 SDIO_ID=0092:7777 
+== iface: wlan0
+== scan BSS count: 7
+	SSID: POCO X3 Pro
+	SSID: ESP-CAM_MJPEG_08F4ACC964EC
+	SSID: RAK7268V2_88D5
+	SSID: Repeater_2.4G_FA12D4
+	SSID: ESP-CAM_MJPEG_F49ED11B5AE0
+== dmesg
+[   33.013634] esp32_sdio: esp_probe: ESP network device detected
+[   33.017199] esp32_sdio: process_esp_bootup_event: Received ESP boot-up event
+[   33.017242] esp32_sdio: esp_validate_chipset: Chipset=ESP32-C6 ID=0d detected over SDIO
+[   33.017276] esp32_sdio: process_event_esp_bootup: Slave RX Buffer Size configured dynamically: 15872 bytes
+[   33.017293] esp32_sdio: process_fw_data: ESP chipset's last reset cause:
+[   33.017301] esp32_sdio: print_reset_reason: Unknown[21]
+[   33.017313] esp32_sdio: check_esp_version: ESP-Hosted Version: NG-1.0.6.0.15
+[   33.156983] esp32_sdio: decode_radio_service: Radio service response: requested=0 active=0 flags=0x0 nonce=0000000000000000

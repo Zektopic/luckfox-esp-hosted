@@ -203,6 +203,12 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
   - Two supplies on one 5 V net push current into each other (risk to the PC's USB port and the adapter).
   - All return current and the SDIO signal returns share one jumper, so the C6's radio start-up spike becomes ground bounce right when the third write arrives.
 - **Fix requested (r2):** for development, keep the C6 on PC USB (for COM4) and the Luckfox on its supply, but **remove the 5 V link**. Connect **GND on both pins 23 and 28** (more is better, ideally running next to CLK). Final in-car setup: a single 5 V source (Luckfox pin 40 → C6 5V, C6 USB unplugged).
+- ✅ **Fixed (r2, 2026-10-12): wiring.**
+  - New wiring: **separate power** (the 5 V link between the boards removed; C6 on PC USB, Luckfox on its own supply), **2 GND wires** (pins 23 + 28) and **decoupling capacitors** added by the user.
+  - Result: **`RESULT: PASS`**. 0 transport errors; the C6 logs `station started` and `wifi scanning done`; `iw dev wlan0 scan` sees 7 networks.
+  - Stress: 5 back-to-back scans gave 5, 8, 10, 10, 10 BSS with 0 errors. **r3** (fresh C6 reset) PASS again.
+  - Bus: 4-bit, 9.9 MHz, `sd high-speed`, still without external pull-ups. The C6 runs the patched firmware (`NSEND_NSAMPLE` + internal pull-ups); whether the stock `NSEND_PSAMPLE` also works with the good wiring hasn't been A/B-tested yet.
+  - **Lesson:** a single GND wire plus two supplies tied on one 5 V net corrupted host→C6 writes exactly when the C6's radio started. Use ≥2 GNDs, one power source per board (or one shared source), and decoupling.
 - Test loop: `scripts/test-luckfox-sdio.sh <name> [clock_hz]` (work folder) resets the C6 via COM4, re-detects the card on the Luckfox, loads the driver, runs `iw scan` and prints PASS/FAIL with both logs.
 - Handy for testing without a reboot: `rmmod esp32_sdio` → reset the C6 over COM4 (RTS) → `echo ff9a0000.mmc > /sys/bus/platform/drivers/dwmmc_rockchip/unbind` then `bind` (forces a re-detect) → `insmod`. Access: `ssh luckfox` (root@192.168.1.64).
 

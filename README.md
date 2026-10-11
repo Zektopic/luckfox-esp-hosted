@@ -5,7 +5,12 @@ Turns an **ESP32-C6 SuperMini** into an **ESP-Hosted-Linux** Wi-Fi/BLE co-proces
 
 - **Step 1:** build and flash the C6 co-processor firmware.
 - **Step 2:** wiring, device tree, kernel and `esp32_sdio.ko` on the Luckfox.
-- **Status (2026-10-12):** the C6 is detected over SDIO and `wlan0` appears. The data link fails on the first write during the C6's radio start-up, which points to power/ground wiring. See the "First hardware test" section of [`docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md`](docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md).
+- **Status (2026-10-12): ✅ Wi-Fi over SDIO works.**
+  - The Luckfox Pico Max gets `wlan0` from the ESP32-C6, and `iw dev wlan0 scan` sees 5–10 networks.
+  - 0 transport errors across repeated test rounds and back-to-back scans: 4-bit, 9.9 MHz, no external pull-ups.
+  - The fix was wiring: **separate power per board, 2 GND wires (pins 23 + 28), decoupling capacitors.** With the 5 V rails tied and one GND, host→C6 writes failed at the C6's radio start.
+  - Next: associate with an AP (`/usr/sbin/wpa_supplicant`), DHCP, ping/iperf, auto-load at boot.
+  - Full history: [`docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md`](docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md).
 
 Obsidian notes (source of `docs/obsidian/`): `manupas-obsidian-notes/Projects/Electronics/OSS/Luckfox-ALPR/11-ESP-Hosted-on-ESP32-C6.md`
 
