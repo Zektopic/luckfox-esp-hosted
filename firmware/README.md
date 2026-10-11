@@ -11,6 +11,11 @@ All firmware images for the Luckfox-ALPR / ESP-Hosted work, one folder per board
 
 How they were built: `../README.md` (C6) and `../luckfox-sdk/README.md` (Luckfox).
 
+> **Cloned the repo?** The `*.img` files are not in git (too big). Download them from the GitHub Release
+> [`luckfox-pico-max-2026-10-11`](https://github.com/Zektopic/luckfox-esp-hosted/releases/tag/luckfox-pico-max-2026-10-11).
+> Rename them to `update.img` / `boot.img` inside `luckfox-pico-max/2026-10-11_esp-hosted/` (or `_stock/`) and check them against `SHA256SUMS.txt`.
+> The Arduino backup folder is local-only (it holds saved Wi-Fi credentials).
+
 ## Flash the Luckfox Pico Max (Windows)
 
 > **This replaces the Max's whole system on SPI-NAND** (whatever is in `/userdata` and `/oem` too). Keep the stock image as the way back.
