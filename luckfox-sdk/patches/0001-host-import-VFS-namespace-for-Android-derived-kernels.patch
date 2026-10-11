@@ -1,0 +1,33 @@
+From: Luckfox ALPR build <noreply@localhost>
+Subject: [PATCH] host: import the VFS symbol namespace (Rockchip/Android-derived kernels)
+
+Rockchip's RV1106 kernel (Luckfox Pico SDK, Linux 5.10, Android-common based)
+exports filp_open() and kernel_read() only in the symbol namespace
+VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver. The host driver uses
+them for host-side ESP firmware OTA (main.c), so modpost fails with:
+
+  ERROR: modpost: module esp32_sdio uses symbol kernel_read from namespace
+  VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver, but does not import it.
+
+Importing a namespace that a kernel doesn't define is harmless, so this is safe
+on other kernels too. (Linux >= 6.13 spells it MODULE_IMPORT_NS("..."); this
+patch targets the 5.10 Luckfox kernel.)
+
+---
+ host/main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/host/main.c b/host/main.c
+--- a/host/main.c
++++ b/host/main.c
+@@ -2280,5 +2280,10 @@ MODULE_AUTHOR("Yogesh Mantri <yogesh.mantri@espressif.com>");
+ MODULE_AUTHOR("Kapil Gupta <kapil.gupta@espressif.com>");
+ MODULE_DESCRIPTION("Wifi driver for ESP-Hosted solution");
+ MODULE_VERSION(RELEASE_VERSION);
++#ifdef MODULE_IMPORT_NS
++/* filp_open()/kernel_read() (host-side OTA) live in this namespace on
++ * Android-derived kernels such as Rockchip's RV1106 5.10. */
++MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
++#endif
+ module_init(esp_init);
+ module_exit(esp_exit);

@@ -1,0 +1,6 @@
+  0x000000: attempt 1 failed (['A fatal error occurred: Corrupt data, expected 0x1000 bytes but received 0xc49 bytes'])
+  0x000000: attempt 2 failed (['A fatal error occurred: Corrupt data, expected 0x1000 bytes but received 0xc8b bytes'])
+  0x000000: attempt 3 failed (['A fatal error occurred: Corrupt data, expected 0x1000 bytes but received 0xb3a bytes'])
+  0x000000: attempt 4 failed (['A fatal error occurred: Corrupt data, expected 0x1000 bytes but received 0xf23 bytes'])
+giving up at 0x000000
+EXIT=1

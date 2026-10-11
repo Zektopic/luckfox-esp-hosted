@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * DRAFT, NOT YET TESTED: ESP32-C6 SuperMini (ESP-Hosted-Linux, SDIO) on a Luckfox Pico Pro/Max.
+ *
+ * Include at the end of sysdrv/source/kernel/arch/arm/boot/dts/rv1106g-luckfox-pico-pro-max.dts
+ * (Luckfox SDK), rebuild with ./build.sh kernel, and flash the boot partition.
+ * Kernel config also needs CONFIG_CFG80211 (off in luckfox_rv1106_linux_defconfig), see README.
+ *
+ * Uses the RV1106 SDIO controller (&sdio, mmc@ff9a0000, disabled by default) on pin-mux M0,
+ * GPIO2_A0..A5 = header pins 21-27 (3.3 V domain). Pin groups come from rv1106-pinctrl.dtsi.
+ * &sdio has not been seen enabled on any Luckfox board yet, so treat the controller as unproven.
+ *
+ *   SDIO  RV1106     Pro/Max pin   C6 SuperMini
+ *   CLK   GPIO2_A2   26            GPIO19
+ *   CMD   GPIO2_A3   27            GPIO18   (10k pull-up)
+ *   D0    GPIO2_A1   25            GPIO20   (10k pull-up)
+ *   D1    GPIO2_A0   24            GPIO21   (10k pull-up)
+ *   D2    GPIO2_A5   22            GPIO22   (10k pull-up)
+ *   D3    GPIO2_A4   21            GPIO23   (10k pull-up)
+ *   GND   -          23, 28        GND
+ *
+ * Conflicts: these pins are UART1_M1 (21/22), I2C4_M0 (24/25) and UART1 RTS/CTS (24/25).
+ * Don't enable those with luckfox-config. On a stock image they are unused: uart1 is disabled,
+ * i2c4 (camera) uses its M2 pins, and i2s0_8ch (internal audio codec) has no external pins.
+ *
+ * No reset line by default: the C6 SuperMini may not bring EN out to a pin (only a RESET button
+ * is documented). Power both boards together: the C6 reaches SDIO init ~0.6 s after power-up,
+ * long before the Luckfox kernel probes MMC, and recovery after enumeration is in-band.
+ * If a reset line IS available, see the optional esp_pwrseq block at the bottom.
+ */
+
+&sdio {
+	bus-width = <4>;
+	max-frequency = <10000000>;	/* start at 10 MHz on jumper wires, then raise step by step */
+	cap-sd-highspeed;
+	cap-sdio-irq;
+	keep-power-in-suspend;
+	non-removable;
+	no-1-8-v;			/* 3.3 V signalling only */
+	no-mmc;
+	no-sd;
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc1m0_clk &sdmmc1m0_cmd &sdmmc1m0_bus4>;
+	status = "okay";
+};
+
+/*
+ * OPTIONAL: host-controlled C6 reset, only if the SuperMini exposes EN/RST.
+ * Needs CONFIG_PWRSEQ_SIMPLE=y (Kconfig default y; check the built .config). Without it the
+ * &sdio probe defers forever with no error and no SDIO device.
+ *
+ * / {
+ *	esp_pwrseq: esp-pwrseq {
+ *		compatible = "mmc-pwrseq-simple";
+ *		reset-gpios = <&gpio2 RK_PA6 GPIO_ACTIVE_LOW>;	// header pin 29 -> C6 EN
+ *		// C6 reaches "FW_SDIO_SLAVE: Using SDIO interface" ~0.59 s after reset
+ *		// (logs/04-boot.log); a non-removable card is probed once.
+ *		post-power-on-delay-ms = <1000>;
+ *	};
+ * };
+ * &sdio { mmc-pwrseq = <&esp_pwrseq>; };
+ */

@@ -1,0 +1,15 @@
+# Upstream clones: not vendored. The pinned commits + our patches are documented in README.md ("Sources").
+/esp-hosted/
+/esp-hosted-linux/
+
+# Large Luckfox images (update.img is 82 MB): published as GitHub Release assets instead.
+*.img
+
+# The old Arduino sketch's NVS contains saved Wi-Fi credentials (nvs.net80211 sta.ssid / sta.pswd). Never commit.
+/firmware/esp32c6-supermini/2026-10-11_original-arduino-backup/
+
+# Python / OS noise
+__pycache__/
+*.pyc
+Thumbs.db
+desktop.ini

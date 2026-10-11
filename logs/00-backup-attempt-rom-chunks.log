@@ -1,0 +1,7 @@
+0x020000 / 0x0f2000 done
+  0x020000: attempt 1 failed (['A fatal error occurred: Packet content transfer stopped (received 13 bytes)'])
+  0x020000: attempt 2 failed (['A fatal error occurred: Packet content transfer stopped (received 13 bytes)'])
+  0x020000: attempt 3 failed (['A fatal error occurred: Packet content transfer stopped (received 13 bytes)'])
+  0x020000: attempt 4 failed (['A fatal error occurred: Packet content transfer stopped (received 70 bytes)'])
+giving up at 0x020000
+EXIT=1

@@ -1,0 +1,25 @@
+diff --git a/esp/esp_driver/network_adapter/main/sdio_slave_api.c b/esp/esp_driver/network_adapter/main/sdio_slave_api.c
+index 53458f5..424d631 100644
+--- a/esp/esp_driver/network_adapter/main/sdio_slave_api.c
++++ b/esp/esp_driver/network_adapter/main/sdio_slave_api.c
+@@ -529,14 +529,18 @@ static interface_handle_t * sdio_init(void)
+            reliable, please make sure external pullups are connected to the
+            bus in your real design.
+            */
+-        //.flags              = SDIO_SLAVE_FLAG_INTERNAL_PULLUP,
++        /* Luckfox ALPR: the C6 SuperMini <-> Luckfox Pico Max link has no external pull-ups yet. */
++        .flags              = SDIO_SLAVE_FLAG_INTERNAL_PULLUP,
+         /* Note: Sometimes the SDIO card is detected but gets problem in
+          * Read/Write or handling ISR because of SDIO timing issues.
+          * In these cases, Please tune timing below using value from
+          * https://github.com/espressif/esp-idf/blob/release/v5.0/components/hal/include/hal/sdio_slave_types.h#L26-L38
+          * */
+ #if defined(CONFIG_IDF_TARGET_ESP32C6) || defined(CONFIG_IDF_TARGET_ESP32C61)
+-        .timing             = SDIO_SLAVE_TIMING_NSEND_PSAMPLE,
++        /* Luckfox ALPR: with NSEND_PSAMPLE every 512-byte CMD53 write from the Luckfox Pico Max
++         * (RV1106 DW-MMC, HS timing) failed with CRC -84 at both 10 MHz and 1 MHz, while reads worked.
++         * Sample host data on the falling edge instead (still send on the falling edge). */
++        .timing             = SDIO_SLAVE_TIMING_NSEND_NSAMPLE,
+ #endif
+     };
+ #ifdef CONFIG_SDIO_DEFAULT_SPEED

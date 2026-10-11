@@ -1,0 +1,11 @@
+1.0: Pulling from luckfoxtech/luckfox_pico
+aece8493d397: Pulling fs layer
+fe7d173ae254: Pulling fs layer
+aece8493d397: Download complete
+aece8493d397: Pull complete
+fe7d173ae254: Download complete
+fe7d173ae254: Pull complete
+Digest: sha256:915d44588085826cbeda4b969dbbe7d5e54bf779ba36cda3c5072ee9533e0417
+Status: Downloaded newer image for luckfoxtech/luckfox_pico:1.0
+docker.io/luckfoxtech/luckfox_pico:1.0
+EXIT=0

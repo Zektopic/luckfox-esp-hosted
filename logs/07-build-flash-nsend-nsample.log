@@ -1,0 +1,385 @@
+﻿powershell : Activating ESP-IDF 6.1
+At line:1 char:302
++ ... tch {} } }; powershell -NoProfile -ExecutionPolicy Bypass -File C:\Us ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Activating ESP-IDF 6.1:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Setting IDF_PATH to 'C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\esp-idf'.
+* Checking python version ... 3.13.15
+* Checking python dependencies ... OK
+* Deactivating the current ESP-IDF environment (if any) ... OK
+* Establishing a new ESP-IDF environment ... OK
+* Identifying shell ... powershell.exe
+* Detecting outdated tools in system ... OK - no outdated tools found
+
+Done! You can now compile ESP-IDF projects.
+Go to the project directory and run:
+
+  idf.py build
+
+[1/9] Performing build step for 'bootloader'
+[1/1] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build\bootloader && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/bootloader/bootloader.bin"
+
+Bootloader binary size 0x5650 bytes. 0x29b0 bytes (33%) free.
+
+
+[2/9] No install step for 'bootloader'
+[3/9] Completed 'bootloader'
+[4/9] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/sdio_slave_api.c.obj
+[5/9] Linking C static library esp-idf\main\libmain.a
+[6/9] Generating esp-idf/esp_system/ld/sections.ld
+NOTE: C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/main/Kconfig.projbuild:245: ESP_SERIAL_DEBUG: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/main/Kconfig.projbuild:251: ESP_WLAN_DEBUG: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/main/Kconfig.projbuild:257: ESP_BT_DEBUG: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/bt/host/nimble/Kconfig.in:1428: BT_NIMBLE_MESH_PROVISIONER: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/fatfs/Kconfig:240: FATFS_PRINT_LLI: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+
+NOTE: C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/fatfs/Kconfig:245: FATFS_PRINT_FLOAT: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+
+Skipping linker fragment parsing, fragment files unchanged
+
+[7/9] Linking CXX executable network_adapter.elf
+[8/9] Generating binary image from built executable
+esptool v5.5.0
+
+Creating ESP32-C6 image...
+
+Merged 4 ELF sections.
+
+Successfully created ESP32-C6 image.
+
+Generated C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/network_adapter.bin
+[9/9] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/partition_table/partition-table.bin C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/network_adapter.bin"
+network_adapter.bin binary size 0xf0850 bytes. Smallest app partition is 0x120000 bytes. 0x2f7b0 bytes (16%) free.
+
+Executing action: all (aliases: build)
+Running ninja in directory C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build
+Executing "ninja all"...
+
+
+Project build complete. To flash, run:
+ idf.py flash
+or
+ idf.py -p PORT flash
+or
+ python -m esptool --chip esp32c6 -b 460800 --before default-reset --after hard-reset write-flash --flash-mode dio --flash-size 4MB --flash-freq 80m 0x0 build\bootloader\bootloader.bin 0x8000 build\partition_table\partition-table.bin 0xd000 build\ota_data_initial.bin 0x10000 build\network_adapter.bin
+or from the "C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build" directory
+ python -m esptool --chip esp32c6 -b 460800 --before default-reset --after hard-reset write-flash "@flash_args"
+[1/4] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/partition_table/partition-table.bin C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/network_adapter.bin"
+network_adapter.bin binary size 0xf0850 bytes. Smallest app partition is 0x120000 bytes. 0x2f7b0 bytes (16%) free.
+
+[2/4] Performing build step for 'bootloader'
+[1/1] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build\bootloader && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/bootloader/bootloader.bin"
+
+Bootloader binary size 0x5650 bytes. 0x29b0 bytes (33%) free.
+
+
+[3/4] No install step for 'bootloader'
+[4/4] Completed 'bootloader'
+[0/1] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build && C:\Users\manup\.espressif-idf61\tools\cmake\4.0.3\bin\cmake.exe -D IDF_SIZE_TOOL=C:/Users/manup/.espressif-idf61/python_env/idf6.1_py3.13_env/Scripts/python.exe;-m;esp_idf_size -D MAP_FILE=C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/network_adapter.map -D OUTPUT_JSON= -P C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/tools/cmake/run_size_tool.cmake"
+                            Memory Type Usage Summary                             
+┌─────────────────────┬──────────────┬──────────┬────────────────┬───────────────┐
+│ Memory Type/Section │ Used [bytes] │ Used [%] │ Remain [bytes] │ Total [bytes] │
+├─────────────────────┼──────────────┼──────────┼────────────────┼───────────────┤
+│ Flash Code          │       871102 │          │                │               │
+│    .text            │       737078 │          │                │               │
+│    .rodata          │       133488 │          │                │               │
+│    .init_array      │          264 │          │                │               │
+│    .appdesc         │          256 │          │                │               │
+│    .tdata           │           16 │          │                │               │
+│ DIRAM               │       133807 │     29.6 │         318305 │        452112 │
+│    .text            │        97728 │    21.62 │                │               │
+│    .bss             │        19848 │     4.39 │                │               │
+│    .data            │        16231 │     3.59 │                │               │
+│ LP SRAM             │           24 │     0.15 │          16360 │         16384 │
+│    .rtc_reserved    │           24 │     0.15 │                │               │
+└─────────────────────┴──────────────┴──────────┴────────────────┴───────────────┘
+Total image size: 984797 bytes (.bin may be padded larger)
+Note: The reported total sizes may be smaller than those in the technical reference manual due to reserved memory and 
+application configuration. The total flash size available for the application is not included by default, as it cannot 
+be reliably determined due to the presence of other data like the bootloader, partition table, and application 
+partition size. The total external RAM size is not included either, because the amount of RAM connected to the chip is 
+detected at boot and is not known during the build.
+Executing action: size
+Running ninja in directory C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build
+Executing "ninja all"...
+Running ninja in directory C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build
+Executing "ninja size"...
+[1/4] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/partition_table/partition-table.bin C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/network_adapter.bin"
+network_adapter.bin binary size 0xf0850 bytes. Smallest app partition is 0x120000 bytes. 0x2f7b0 bytes (16%) free.
+
+[2/4] Performing build step for 'bootloader'
+[1/1] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build\bootloader && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/bootloader/bootloader.bin"
+
+Bootloader binary size 0x5650 bytes. 0x29b0 bytes (33%) free.
+
+
+[3/4] No install step for 'bootloader'
+[4/4] Completed 'bootloader'
+Adding "flash"'s dependency "all" to list of commands with default set of options.
+Executing action: all (aliases: build)
+Running ninja in directory C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build
+Executing "ninja all"...
+Executing action: flash
+Running ninja in directory C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build
+Executing "ninja flash"...
+[1/5] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/partition_table/partition-table.bin C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/network_adapter.bin"
+
+network_adapter.bin binary size 0xf0850 bytes. Smallest app partition is 0x120000 bytes. 0x2f7b0 bytes (16%) free.
+
+
+[2/5] Performing build step for 'bootloader'
+
+[1/1] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver\network_adapter\build\bootloader && C:\Users\manup\.espressif-idf61\python_env\idf6.1_py3.13_env\Scripts\python.exe C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/manup/Documents/GitHub/ESP32/esp-hosted/esp-hosted-linux/esp/esp_driver/network_adapter/build/bootloader/bootloader.bin"
+
+
+Bootloader binary size 0x5650 bytes. 0x29b0 bytes (33%) free.
+
+
+
+[3/5] No install step for 'bootloader'
+
+[4/5] Completed 'bootloader'
+
+[4/5] Running utility command for flash
+
+esptool --chip esp32c6 -p COM4 -b 460800 --before=default-reset --after=hard-reset write-flash --flash-mode dio --flash-freq 80m --flash-size 4MB 0x0 bootloader/bootloader.bin 0x8000 partition_table/partition-table.bin 0xd000 ota_data_initial.bin 0x10000 network_adapter.bin --diff-with bootloader/bootloader_flashed.bin partition_table/partition-table_flashed.bin ota_data_initial_flashed.bin network_adapter_flashed.bin
+
+esptool v5.5.0
+
+Serial port COM4:
+
+Connecting...
+
+Connected to ESP32-C6 on COM4:
+
+Chip type:          ESP32-C6FH4 (QFN32) (revision v0.1)
+
+Features:           Wi-Fi 6, BT 5 (LE), IEEE802.15.4, Single Core + LP Core, 160MHz, Embedded Flash 4MB
+
+Crystal frequency:  40MHz
+
+USB mode:           USB-Serial/JTAG
+
+MAC:                e4:b0:63:ff:fe:41:e0:1c
+
+BASE MAC:           e4:b0:63:41:e0:1c
+
+MAC_EXT:            ff:fe
+
+
+
+Uploading stub flasher...
+
+Running stub flasher...
+
+Stub flasher running.
+
+Changing baud rate to 460800...
+
+Changed.
+
+
+
+Configuring flash size...
+
+
+
+Writing 'bootloader/bootloader.bin' at 0x00000000...
+
+SHA digest in image updated.
+
+SHA digest in image updated.
+
+No changed sectors found, verifying if data is in flash...
+
+'bootloader/bootloader.bin' at 0x00000000 verified.
+
+
+
+Writing 'partition_table/partition-table.bin' at 0x00008000...
+
+No changed sectors found, verifying if data is in flash...
+
+'partition_table/partition-table.bin' at 0x00008000 verified.
+
+
+
+Writing 'ota_data_initial.bin' at 0x0000d000...
+
+No changed sectors found, verifying if data is in flash...
+
+'ota_data_initial.bin' at 0x0000d000 verified.
+
+
+
+Writing 'network_adapter.bin' at 0x00010000...
+
+Changed data sectors found, fast reflashing...
+
+Reflashing 1 changed sector at 0x00010000...
+
+Flash will be erased from 0x00010000 to 0x00010fff...
+
+Compressed 4096 bytes to 1916...
+
+Writing at 0x00011000 ============================== 100.0% 1.87kB/1.87kB [0s] 
+
+Wrote 4096 bytes (1916 compressed) at 0x00010000 in 0.1 seconds (515.4 kbit/s).
+
+Reflashing 1 changed sector at 0x00021000...
+
+Flash will be erased from 0x00021000 to 0x00021fff...
+
+Compressed 4096 bytes to 1862...
+
+Writing at 0x00022000 ============================== 100.0% 1.82kB/1.82kB [0s] 
+
+Wrote 4096 bytes (1862 compressed) at 0x00021000 in 0.1 seconds (509.7 kbit/s).
+
+Reflashing 1 changed sector at 0x00024000...
+
+Flash will be erased from 0x00024000 to 0x00024fff...
+
+Compressed 4096 bytes to 2178...
+
+Writing at 0x00025000 ============================== 100.0% 2.13kB/2.13kB [0s] 
+
+Wrote 4096 bytes (2178 compressed) at 0x00024000 in 0.1 seconds (500.5 kbit/s).
+
+Reflashing 3 changed sectors at 0x00027000...
+
+Flash will be erased from 0x00027000 to 0x00029fff...
+
+Compressed 12288 bytes to 6678...
+
+Writing at 0x0002a000 ============================== 100.0% 6.52kB/6.52kB [0s] 
+
+Wrote 12288 bytes (6678 compressed) at 0x00027000 in 0.1 seconds (1042.0 kbit/s).
+
+Reflashing 4 changed sectors at 0x00030000...
+
+Flash will be erased from 0x00030000 to 0x00033fff...
+
+Compressed 16384 bytes to 10067...
+
+Writing at 0x00034000 ============================== 100.0% 9.83kB/9.83kB [0s] 
+
+Wrote 16384 bytes (10067 compressed) at 0x00030000 in 0.1 seconds (1187.7 kbit/s).
+
+Reflashing 7 changed sectors at 0x00035000...
+
+Flash will be erased from 0x00035000 to 0x0003bfff...
+
+Compressed 28672 bytes to 20391...
+
+Writing at 0x0003aa86 ========================        80.3% 16.00kB/19.91kB [0s] 
+
+Writing at 0x0003c000 ============================== 100.0% 19.91kB/19.91kB [0s] 
+
+Wrote 28672 bytes (20391 compressed) at 0x00035000 in 0.2 seconds (1000.0 kbit/s).
+
+Reflashing 11 changed sectors at 0x0003d000...
+
+Flash will be erased from 0x0003d000 to 0x00047fff...
+
+Compressed 45056 bytes to 29742...
+
+Writing at 0x00042c2e ================>               55.1% 16.00kB/29.04kB [0s] 
+
+Writing at 0x00048000 ============================== 100.0% 29.04kB/29.04kB [0s] 
+
+Wrote 45056 bytes (29742 compressed) at 0x0003d000 in 0.3 seconds (1290.1 kbit/s).
+
+Reflashing 1 changed sector at 0x00049000...
+
+Flash will be erased from 0x00049000 to 0x00049fff...
+
+Compressed 4096 bytes to 2984...
+
+Writing at 0x0004a000 ============================== 100.0% 2.91kB/2.91kB [0s] 
+
+Wrote 4096 bytes (2984 compressed) at 0x00049000 in 0.1 seconds (466.0 kbit/s).
+
+Reflashing 182 changed sectors at 0x0004b000...
+
+Flash will be erased from 0x0004b000 to 0x00100fff...
+
+Compressed 745472 bytes to 487663...
+
+Writing at 0x00051314 =                                3.4% 16.00kB/476.23kB [0s] 
+
+Writing at 0x00057b3e ==                               6.7% 32.00kB/476.23kB [0s] 
+
+Writing at 0x0005dc5f ===                             10.1% 48.00kB/476.23kB [0s] 
+
+Writing at 0x00063b66 ====                            13.4% 64.00kB/476.23kB [1s] 
+
+Writing at 0x00069be8 =====                           16.8% 80.00kB/476.23kB [2s] 
+
+Writing at 0x000702ba ======                          20.2% 96.00kB/476.23kB [2s] 
+
+Writing at 0x000762f8 =======                         23.5% 112.00kB/476.23kB [3s] 
+
+Writing at 0x0007c5b4 ========                        26.9% 128.00kB/476.23kB [3s] 
+
+Writing at 0x00082473 =========                       30.2% 144.00kB/476.23kB [3s] 
+
+Writing at 0x00088cb8 ==========                      33.6% 160.00kB/476.23kB [3s] 
+
+Writing at 0x0008ef61 ===========                     37.0% 176.00kB/476.23kB [4s] 
+
+Writing at 0x00094b18 ============                    40.3% 192.00kB/476.23kB [4s] 
+
+Writing at 0x0009ab81 =============                   43.7% 208.00kB/476.23kB [4s] 
+
+Writing at 0x000a0568 ==============                  47.0% 224.00kB/476.23kB [4s] 
+
+Writing at 0x000a66a9 ===============                 50.4% 240.00kB/476.23kB [4s] 
+
+Writing at 0x000ac6aa ================                53.8% 256.00kB/476.23kB [4s] 
+
+Writing at 0x000b2305 =================               57.1% 272.00kB/476.23kB [5s] 
+
+Writing at 0x000b8194 ==================              60.5% 288.00kB/476.23kB [5s] 
+
+Writing at 0x000be750 ===================             63.8% 304.00kB/476.23kB [5s] 
+
+Writing at 0x000c4b23 ====================            67.2% 320.00kB/476.23kB [5s] 
+
+Writing at 0x000ca9e2 =====================           70.6% 336.00kB/476.23kB [5s] 
+
+Writing at 0x000d0b65 ======================          73.9% 352.00kB/476.23kB [5s] 
+
+Writing at 0x000d6b0c =======================         77.3% 368.00kB/476.23kB [5s] 
+
+Writing at 0x000dcaca ========================        80.6% 384.00kB/476.23kB [6s] 
+
+Writing at 0x000e2939 =========================       84.0% 400.00kB/476.23kB [6s] 
+
+Writing at 0x000e7fa4 ==========================      87.4% 416.00kB/476.23kB [6s] 
+
+Writing at 0x000edccb ===========================     90.7% 432.00kB/476.23kB [6s] 
+
+Writing at 0x000f4434 ============================    94.1% 448.00kB/476.23kB [6s] 
+
+Writing at 0x000f9fbb =============================   97.4% 464.00kB/476.23kB [6s] 
+
+Writing at 0x00101000 ============================== 100.0% 476.23kB/476.23kB [6s] 
+
+Wrote 745472 bytes (487663 compressed) at 0x0004b000 in 7.1 seconds (839.5 kbit/s).
+
+Verifying written data...
+
+Hash of data verified.
+
+
+
+Hard resetting via RTS pin...
+
+Done
+
+Flashed. Check the boot log with:
+  python scripts\serial_capture.py --port COM4 --seconds 10
+or interactively: idf.py -p COM4 monitor   (Ctrl+] to quit)

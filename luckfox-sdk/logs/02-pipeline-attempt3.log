@@ -1,0 +1,81 @@
+
+===== [19:36:52] wait for the previous chown to finish =====
+
+===== [19:36:52] 1. save stock image -> ~/luckfox/out/stock-image =====
+total 159960
+drwxr-xr-x 2 manupa manupa     4096 Oct 11 19:31 .
+drwxrwxr-x 3 manupa manupa     4096 Oct 11 19:31 ..
+-rw-r--r-- 1 manupa manupa  3724800 Oct 11 15:00 boot.img
+-rw-r--r-- 1 manupa manupa   268736 Oct 11 14:53 download.bin
+-rw-r--r-- 1 manupa manupa   262144 Oct 11 15:57 env.img
+-rw-r--r-- 1 manupa manupa      241 Oct 11 15:57 .env.txt
+-rw-r--r-- 1 manupa manupa   188416 Oct 11 14:53 idblock.img
+-rw-r--r-- 1 manupa manupa 20054016 Oct 11 15:57 oem.img
+-rw-r--r-- 1 manupa manupa 55050240 Oct 11 15:57 rootfs.img
+-rw-r--r-- 1 manupa manupa     1664 Oct 11 15:57 sd_update.txt
+-rw-r--r-- 1 root   root        689 Oct 11 19:31 SHA256SUMS.txt
+-rw-r--r-- 1 manupa manupa     1607 Oct 11 15:57 tftp_update.txt
+-rw-r--r-- 1 manupa manupa   262144 Oct 11 14:53 uboot.img
+-rw-r--r-- 1 manupa manupa 82051658 Oct 11 15:57 update.img
+-rw-r--r-- 1 manupa manupa  1966080 Oct 11 15:57 userdata.img
+
+===== [19:36:52] 2. apply ESP-Hosted changes (m = cfg80211/BT as modules) =====
+[dts] 138:#include "esp-hosted-sdio-pro-max.dtsi"
+[kernel] CONFIG_CFG80211=m CONFIG_BT=m 
+[kernel] export RK_KERNEL_DEFCONFIG_FRAGMENT=esp-hosted.config
+[buildroot] BR2_PACKAGE_WPA_SUPPLICANT=y BR2_PACKAGE_WPA_SUPPLICANT_NL80211=y BR2_PACKAGE_WPA_SUPPLICANT_CLI=y BR2_PACKAGE_IW=y 
+[buildroot] synced defconfig into sysdrv/source/buildroot/buildroot-2023.02.6/configs/
+--- git status
+ M project/app/wifi_app/hostapd-2.6/hostapd/hostapd
+ M project/app/wifi_app/hostapd-2.6/hostapd/hostapd_cli
+ M project/app/wifi_app/wifi/librkwifibt.so
+ M project/cfg/BoardConfig_IPC/BoardConfig-SPI_NAND-Buildroot-RV1106_Luckfox_Pico_Pro_Max-IPC.mk
+ M sysdrv/source/kernel/arch/arm/boot/dts/rv1106g-luckfox-pico-pro-max.dts
+ M sysdrv/tools/board/buildroot/luckfox_pico_defconfig
+?? sysdrv/source/kernel/arch/arm/boot/dts/esp-hosted-sdio-pro-max.dtsi
+?? sysdrv/source/kernel/arch/arm/configs/esp-hosted.config
+
+===== [19:36:52] 3. rebuild: ./build.sh all =====
+[32;1m[build.sh:info] MEDIUM SPI_NAND relink Image[0m
+[32;1m[build.sh:info] Running build_firmware succeeded.[0m
+[32;1m[build.sh:info] Running build_all succeeded.[0m
+build.sh all exit=0
+
+===== [19:39:24] 4. build esp32_sdio.ko =====
+KERNEL build dir: /luckfox/luckfox-pico/sysdrv/source/objs_kernel
+kernel release:   5.10.160
+  CONFIG_CFG80211          CONFIG_CFG80211=m
+  CONFIG_BT                CONFIG_BT=m
+  CONFIG_MMC_DW_ROCKCHIP   CONFIG_MMC_DW_ROCKCHIP=y
+  CONFIG_MODULES           CONFIG_MODULES=y
+  CONFIG_PWRSEQ_SIMPLE     CONFIG_PWRSEQ_SIMPLE=y
+esp-hosted-linux: 172a719 Merge branch 'bugfix/fw_data_port_issue' into 'master'
+patch applied: 0001-host-import-VFS-namespace-for-Android-derived-kernels.patch
+make: Entering directory '/luckfox/esp-hosted-linux/host'
+rm -rf *.o */*.o *.ko *.mod.c *.symvers *.order .*.cmd .tmp_versions
+rm -f spidev_disabler.dtbo overlays/esp32-spi.dtbo
+make ARCH=arm CROSS_COMPILE=/luckfox/luckfox-pico/tools/linux/toolchain/arm-rockchip830-linux-uclibcgnueabihf/bin/arm-rockchip830-linux-uclibcgnueabihf- -C /luckfox/luckfox-pico/sysdrv/source/objs_kernel M=/luckfox/esp-hosted-linux/host clean
+make[1]: Entering directory '/luckfox/luckfox-pico/sysdrv/source/objs_kernel'
+make[1]: Leaving directory '/luckfox/luckfox-pico/sysdrv/source/objs_kernel'
+make ARCH=arm CROSS_COMPILE=/luckfox/luckfox-pico/tools/linux/toolchain/arm-rockchip830-linux-uclibcgnueabihf/bin/arm-rockchip830-linux-uclibcgnueabihf- -C /luckfox/luckfox-pico/sysdrv/source/objs_kernel M=/luckfox/esp-hosted-linux/host modules
+make[1]: Entering directory '/luckfox/luckfox-pico/sysdrv/source/objs_kernel'
+  CC [M]  /luckfox/esp-hosted-linux/host/sdio/esp_sdio.o
+  CC [M]  /luckfox/esp-hosted-linux/host/sdio/esp_sdio_api.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_bt.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_rcp.o
+  CC [M]  /luckfox/esp-hosted-linux/host/main.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_cmd.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_utils.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_cfg80211.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_stats.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_debugfs.o
+  CC [M]  /luckfox/esp-hosted-linux/host/esp_log.o
+  LD [M]  /luckfox/esp-hosted-linux/host/esp32_sdio.o
+  MODPOST /luckfox/esp-hosted-linux/host/Module.symvers
+  CC [M]  /luckfox/esp-hosted-linux/host/esp32_sdio.mod.o
+  LD [M]  /luckfox/esp-hosted-linux/host/esp32_sdio.ko
+make[1]: Leaving directory '/luckfox/luckfox-pico/sysdrv/source/objs_kernel'
+make: Leaving directory '/luckfox/esp-hosted-linux/host'
+/luckfox/changes/build-esp-hosted-ko.sh: line 39: modinfo: command not found
+ko build failed
+PIPELINE_EXIT=4

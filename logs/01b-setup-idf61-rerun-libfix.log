@@ -1,0 +1,6 @@
+﻿IDF_TOOLS_PATH = C:\Users\manup\.espressif-idf61
+Working in C:\Users\manup\Documents\GitHub\ESP32\esp-hosted\esp-hosted-linux\esp\esp_driver
+ESP hosted: patch already applied: ../lib/rom.patch
+ESP hosted: native OpenThread custom RCP transport present
+ESP hosted: replacing wireless libraries
+###### Setup Done ######

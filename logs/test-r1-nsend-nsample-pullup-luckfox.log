@@ -1,0 +1,32 @@
+== host mmc2: , timing spec: 2 (sd high-speed)
+== sdio: SDIO_ID=0092:6666 SDIO_ID=0092:7777 
+== iface: wlan0
+== scan BSS count: 0
+command failed: No such device (-19)
+== dmesg
+[  578.800425] esp32_sdio: esp_probe: ESP network device detected
+[  578.804990] esp32_sdio: process_esp_bootup_event: Received ESP boot-up event
+[  578.805033] esp32_sdio: esp_validate_chipset: Chipset=ESP32-C6 ID=0d detected over SDIO
+[  578.805067] esp32_sdio: process_event_esp_bootup: Slave RX Buffer Size configured dynamically: 15872 bytes
+[  578.805085] esp32_sdio: process_fw_data: ESP chipset's last reset cause:
+[  578.805093] esp32_sdio: print_reset_reason: Unknown[21]
+[  578.805104] esp32_sdio: check_esp_version: ESP-Hosted Version: NG-1.0.6.0.15
+[  578.872226] esp32_sdio: tx_process: ESP_SDIO_TX_ERROR: CMD53 write failed ret=-84 write_len=512 data_left=512 aggr_len=24 buf_needed=1 tx_buffer_count=2
+[  578.872259] esp32_sdio: esp_cmd_transport_failed: CMD_TRANSPORT_FAILURE code=15 seq=3 error=-84
+[  578.872295] esp32_sdio: wait_and_decode_cmd_resp: CMD_WAIT_FAILED code=15 seq=3 ret=-84 elapsed_ms=0 sent_ms=0
+[  578.872327] esp32_sdio: cmd_get_tx_power: wait_and_decode_cmd_resp(priv, cmd_node) failure, ret: -84
+[  579.372612] esp32_sdio: esp_fw_recovery_work: Transport recovery: firmware reset expected
+[  580.569464] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-110 line=242
+[  580.569613] esp32_sdio: esp_sdio_recover_transport_inner: SDIO recover: re-enable function failed -110
+[  580.569631] esp32_sdio: esp_fw_recovery_work: Transport recovery: recover failed -110, retry in 500 ms
+[  581.072623] esp32_sdio: esp_fw_recovery_work: Transport recovery: firmware reset expected
+[  581.072735] esp32_sdio: esp_sdio_recover_transport_inner: SDIO recover: re-enable function failed -110
+[  581.072749] esp32_sdio: esp_fw_recovery_work: Transport recovery: recover failed -110, retry in 1000 ms
+[  582.142633] esp32_sdio: esp_fw_recovery_work: Transport recovery: firmware reset expected
+[  582.142753] esp32_sdio: esp_sdio_recover_transport_inner: SDIO recover: re-enable function failed -110
+[  582.142768] esp32_sdio: esp_fw_recovery_work: Transport recovery: recover failed -110, retry in 2000 ms
+[  584.222643] esp32_sdio: esp_fw_recovery_work: Transport recovery: firmware reset expected
+[  584.222758] esp32_sdio: esp_sdio_recover_transport_inner: SDIO recover: re-enable function failed -110
+[  584.222774] esp32_sdio: esp_fw_recovery_work: Transport recovery: recover failed -110, retry in 4000 ms
+[  584.832887] esp32_sdio: esp_cmd_work: CMD_TRANSPORT_SUBMIT_FAILED code=4 seq=4 ret=-19
+[  584.832979] esp32_sdio: wait_and_decode_cmd_resp: CMD_WAIT_FAILED code=4 seq=4 ret=-19 elapsed_ms=0 sent_ms=0
