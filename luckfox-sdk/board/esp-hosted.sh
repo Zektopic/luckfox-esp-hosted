@@ -17,7 +17,12 @@ LOG=$DIR/esp-hosted.log
 HOST=ff9a0000.mmc
 DRV=/sys/bus/platform/drivers/dwmmc_rockchip
 WATCHDOG_PID=/var/run/esp-hosted-watchdog.pid
-CHECK_EVERY=30          # seconds between watchdog checks
+CHECK_EVERY=10          # seconds between watchdog checks
+# SDIO bus clock in whole MHz (driver parameter "clockspeed"; the Device Tree allows up to 10).
+# 10 MHz ran clean until the wiring was disturbed on 2026-10-12, then gave CRC errors (-84)
+# within seconds at 10 and 5 MHz while ~2.4 MHz ran clean. Wi-Fi via the repeater needs < 2 Mbit/s,
+# 2 MHz x 4 bits still carries ~7 Mbit/s. Raise again once the wiring is fixed.
+SDIO_MHZ=2
 
 log() {
     echo "$(date '+%F %T') $*" >> "$LOG"
@@ -41,15 +46,20 @@ load_modules() {
     for m in cfg80211 libaes ecc ecdh_generic bluetooth; do
         grep -q "^$m " /proc/modules || insmod $KO/$m.ko || return 1
     done
-    grep -q '^esp32_sdio ' /proc/modules || insmod $DIR/esp32_sdio.ko radio_service=none
+    grep -q '^esp32_sdio ' /proc/modules || insmod $DIR/esp32_sdio.ko radio_service=none clockspeed=$SDIO_MHZ
 }
 
-recover_failures() { dmesg | grep -c 'Transport recovery: recover failed'; }
-mark_transport_ok() { recover_failures > /var/run/esp-hosted.recover-baseline; }
+BASELINE=/var/run/esp-hosted.loaded-at
+# kernel timestamp (s since boot) of the newest "recover failed" line, 0 if none
+last_recover_failure() {
+    dmesg | sed -n 's/^\[ *\([0-9]*\)\.[0-9]*\] .*Transport recovery: recover failed.*/\1/p' | tail -1 | grep . || echo 0
+}
+mark_transport_ok() { cut -d. -f1 /proc/uptime > $BASELINE; }
 transport_dead() {
-    # new "recover failed" messages since the driver was (re)loaded = the driver is stuck in its
-    # recovery loop after an SDIO error it couldn't fix. (Old lines in dmesg must not count.)
-    [ "$(recover_failures)" -gt "$(cat /var/run/esp-hosted.recover-baseline 2> /dev/null || echo 0)" ]
+    # a "recover failed" line newer than the last driver (re)load = the driver is stuck in its recovery
+    # loop after an SDIO error it couldn't fix (it retries every 5 s, so the line stays fresh).
+    # Compare timestamps, not counts: the dmesg ring is small and old lines rotate out.
+    [ "$(last_recover_failure)" -gt "$(cat $BASELINE 2> /dev/null || echo 0)" ]
 }
 
 start_supplicant() {
@@ -128,7 +138,7 @@ restart)
 status)
     IF=$(iface)
     echo "sdio: $(sdio_present && echo 'ESP32-C6 present' || echo 'none')"
-    echo "driver: $(grep -q '^esp32_sdio ' /proc/modules && echo loaded || echo 'not loaded')"
+    echo "driver: $(grep -q '^esp32_sdio ' /proc/modules && echo "loaded, clockspeed=$(cat /sys/module/esp32_sdio/parameters/clockspeed) MHz" || echo 'not loaded')"
     echo "interface: ${IF:-none}"
     [ -n "$IF" ] && /usr/sbin/wpa_cli -i "$IF" status 2> /dev/null | grep -E '^(wpa_state|ssid|ip_address)='
     [ -n "$IF" ] && iw dev "$IF" link | grep -E 'signal'

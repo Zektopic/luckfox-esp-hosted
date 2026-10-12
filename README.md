@@ -9,7 +9,14 @@ Turns an **ESP32-C6 SuperMini** into an **ESP-Hosted-Linux** Wi-Fi/BLE co-proces
   - The Luckfox Pico Max gets `wlan0` from the ESP32-C6, and `iw dev wlan0 scan` sees 5–10 networks.
   - 0 transport errors across repeated test rounds and back-to-back scans: 4-bit, 9.9 MHz, no external pull-ups.
   - The fix was wiring: **separate power per board, 2 GND wires (pins 23 + 28), decoupling capacitors.** With the 5 V rails tied and one GND, host→C6 writes failed at the C6's radio start.
-  - Next: associate with an AP (`/usr/sbin/wpa_supplicant`), DHCP, ping/iperf, auto-load at boot.
+  - Station mode works: WPA2 to `Repeater_2.4G_FA12D4`, DHCP, NTP. A boot service with a watchdog runs it (`luckfox-sdk/board/esp-hosted.sh`, `S45esp-hosted`).
+    - Through the repeater: about 1.2–1.5 Mbit/s up and 0.5 Mbit/s down.
+    - The SDIO bus alone: about 35 Mbit/s each way.
+  - ⚠️ **Since 2026-10-12 10:31, Wi-Fi drops every 10–80 s.** The SDIO CRC errors (`-84`) came back after the hardware was handled (USB-C/Ethernet replugged at 10:25–10:30).
+    - The C6 doesn't crash: the errors follow radio activity and go away at lower clocks only when the radio is idle. That's the same power/ground signature as the original fault.
+    - **Check the 2 GND wires, the capacitors and the joints.**
+    - Stopgaps in the service: SDIO clock `SDIO_MHZ=2`, and a watchdog that now notices a dead link in ≤ 10 s (it took about 2 min before).
+    - Bus test: `ssh luckfox 'sh -s 2 180 [clock_hz]' < scripts/rawtp-soak.sh` (stop the service first).
   - Full history: [`docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md`](docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md).
 
 Obsidian notes (source of `docs/obsidian/`): `manupas-obsidian-notes/Projects/Electronics/OSS/Luckfox-ALPR/11-ESP-Hosted-on-ESP32-C6.md`

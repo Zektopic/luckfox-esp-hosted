@@ -218,7 +218,7 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
   3. This `wpa_supplicant` build has no `-s` (syslog) → logs to `/var/log` (RAM).
 - **Persistent service:** `/userdata/esp-hosted/esp-hosted.sh` + `/etc/init.d/S45esp-hosted` (repo: `luckfox-sdk/board/`).
   - **Start:** re-detects the SDIO card, loads the modules, starts `/usr/sbin/wpa_supplicant`; DHCP is the stock `dhcpcd`.
-  - **Watchdog** (every 30 s): reloads on a missing interface or a dead transport, and restarts `wpa_supplicant` if it died.
+  - **Watchdog** (every 30 s, now every 10 s): reloads on a missing interface or a dead transport, and restarts `wpa_supplicant` if it died.
   - **Stop:** unloads the driver (the C6 restarts → the next boot is clean).
   - Tested: normal `reboot` → up on attempt 1; **`reboot -f`** (stale C6, no stop scripts) → attempt 1 fails, attempt 2 up, Wi-Fi at 47 s uptime.
 - **Time:** stock `ntpd -g` syncs from `pool.ntp.org`, matching the PC to the second. Kernel `CONFIG_RTC_HCTOSYS=y` + `CONFIG_RTC_SYSTOHC=y` (RTC kept in sync every 11 min). Timezone set to **`<+0530>-5:30`** (`/etc/TZ` + `/etc/profile`). RTC battery test (full power-off) pending.
@@ -228,6 +228,40 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
 - **SDIO bus alone** (`raw_tp_mode`, no Wi-Fi): **≈35.3 Mbit/s Luckfox→C6, ≈34.2 Mbit/s C6→Luckfox**, steady at 10 MHz/4-bit. The bus is not the bottleneck.
 - **End to end over Wi-Fi** (iperf3 to the build PC, routed via `wlan0`): only **≈1.2–1.7 Mbit/s** (TCP and UDP). UDP is sender-limited with ~0.3 % loss, i.e. backpressure from the air side.
 - Suspects: the single-radio 2.4 GHz repeater (halves throughput) and air congestion (several ESP-CAMs streaming MJPEG nearby). Compare with a better AP.
+
+### Wi-Fi drops (2026-10-12, from 10:31): SDIO bus errors are back
+
+**Symptom:** an SSH session to the Wi-Fi IP (`192.168.1.139`, Ethernet unplugged) was cut off. From then on, Wi-Fi dropped again within seconds to about a minute after every reconnect.
+
+**Timeline** (`/var/log/messages`):
+- **05:45–10:29: 0 SDIO errors.** That's 4.7 h at 10 MHz, including the iperf3 runs.
+- **10:25:38 / 10:25:49:** `dwc3 ffb00000.usb: device disconnect/reset`, meaning something was plugged into or out of the Luckfox USB-C port.
+- **10:29:55:** `eth0` carrier lost (Ethernet unplugged).
+- **10:31:07:** the first `ESP_SDIO_RX_ERROR: PACKET_LEN read failed ret=-84` (CRC error on a host read).
+  - After that, every PACKET_LEN resync also fails with `-84`; the bus stays out of step until the card is re-detected.
+  - The watchdog reloads, and the error comes back within 10–80 s, **with or without Ethernet**.
+
+**Tests** (service stopped; `scripts/rawtp-soak.sh` on the board; logs in `logs/rawtp-soak-unstable-*.txt`):
+
+| Test | Result |
+|---|---|
+| Raw C6→host, 10 MHz (ran clean at 34 Mbit/s before) | `-84` after **0.5 s** |
+| Raw C6→host, 5 MHz | `-84` after **2 s** |
+| Raw C6→host, 2.4 MHz | **0 errors in 6 min** at a steady 8.8 Mbit/s (C6 `stats`) |
+| Real Wi-Fi at 2 MHz (driver `clockspeed=2`) | `-84` after 72 s; then **right at association** (`Connection status: 0`) |
+
+**C6 console during a Wi-Fi failure (COM4):** no panic, brownout or reset. It keeps logging normal Wi-Fi activity until the host's `Stop Data Path`. Only the host sees the corrupted reads.
+
+**Diagnosis:**
+- The SDIO bus became marginal when the hardware was handled (10:25–10:30).
+- The errors depend on clock speed, and they follow **radio activity** (association, traffic). Raw tests without the radio are clean at 2.4 MHz.
+- That's the same signature as the original r1 fault: **power/ground bounce from the C6's RF current**. Something in the r2 fix (2 GNDs, separate power, caps) has probably come loose or changed.
+- **Physical check needed:** both GND wires (pins 23 + 28) and their joints, the capacitors, the CLK/CMD/D0 joints, and what was plugged into the Luckfox USB-C at 10:25. If a PC is on that port, it's another ground path and a possible 5 V back-feed.
+
+**Software changes** (stopgaps; they don't fix the cause):
+- `esp-hosted.sh` sets `SDIO_MHZ=2` (driver `clockspeed=2`). Put it back to 10 once the wiring is right. `status` shows the clock.
+- **Watchdog bug fixed:** it counted `recover failed` lines in `dmesg`, but the ring buffer is small (about 190 lines) and old lines rotate out. After a run of errors, the count stayed at or below the saved baseline, so detection took about 2 min.
+  - It now compares kernel timestamps against the last load time: detection in **≤ 10 s** (checks every 10 s instead of 30 s). An outage is now about 20 s (detect + reload + associate + DHCP).
 
 - Test loop: `scripts/test-luckfox-sdio.sh <name> [clock_hz]` (work folder) resets the C6 via COM4, re-detects the card on the Luckfox, loads the driver, runs `iw scan` and prints PASS/FAIL with both logs.
 - Handy for testing without a reboot: `rmmod esp32_sdio` → reset the C6 over COM4 (RTS) → `echo ff9a0000.mmc > /sys/bus/platform/drivers/dwmmc_rockchip/unbind` then `bind` (forces a re-detect) → `insmod`. Access: `ssh luckfox` (root@192.168.1.64).

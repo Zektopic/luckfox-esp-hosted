@@ -1,0 +1,5 @@
+== rawtp-soak mode=2 secs=120 clock=5000000 1791781907, host mmc2
+== bus: actual clock: 4950000 Hz bus width: 2 (4 bits) timing spec: 2 (sd high-speed) 
+== errors -84: 1  -110: 0  recover failed: 27
+== first error: Oct 12 10:41:49 luckfox kern.err kernel: [17803.045532] esp32_sdio: esp_get_len_from_slave: ESP_SDIO_RX_ERROR: PACKET_LEN read failed ret=-84 notified=0 retries
+Oct 12 10:41:47 luckfox kern.info kernel: [17801.118560] esp32_sdio: process_test_capabilities: start testing of ESP->Host raw throughput

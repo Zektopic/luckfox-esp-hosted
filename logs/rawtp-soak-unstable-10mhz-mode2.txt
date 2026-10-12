@@ -1,0 +1,4 @@
+== rawtp-soak mode=2 secs=180 clock=default 1791781710, host mmc2: 
+== errors -84: 2  -110: 0  recover failed: 38
+== first error: Oct 12 10:38:31 luckfox kern.err kernel: [17604.511305] esp32_sdio: esp_get_len_from_slave: ESP_SDIO_RX_ERROR: PACKET_LEN read failed ret=-84 notified=1 retries
+Oct 12 10:38:30 luckfox kern.info kernel: [17604.015800] esp32_sdio: process_test_capabilities: start testing of ESP->Host raw throughput

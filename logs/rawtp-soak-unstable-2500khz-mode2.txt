@@ -1,0 +1,5 @@
+== rawtp-soak mode=2 secs=120 clock=2500000 1791782036, host mmc2
+== bus: actual clock: 2400000 Hz bus width: 2 (4 bits) timing spec: 2 (sd high-speed) 
+== errors -84: 0  -110: 0  recover failed: 1
+== first error: 
+Oct 12 10:43:56 luckfox kern.info kernel: [17929.630281] esp32_sdio: process_test_capabilities: start testing of ESP->Host raw throughput
