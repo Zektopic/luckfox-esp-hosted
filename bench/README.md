@@ -13,9 +13,11 @@ Measured on the board itself: RV1106G3, 256 MB, stock Luckfox SDK image plus the
 
 | Model (prebuilt RV1106 `.rknn` from `luckfox_pico_rknn_example`) | Input | Latency avg / p95 / max | Inferences/s | NPU DMA memory (runtime report) | CPU of the process |
 |---|---|---|---|---|---|
-| **YOLOv5s** (COCO) | 640×640×3 | **81.2 / 82.3 / 88 ms** | **12.3** | 13.7 MB (weights 7.0 + internal 6.5); heap peak 16.9 MB | ~1–2 % |
-| RetinaFace | 640×640×3 | 25.0 / 25.7 / 26 ms | 39.9 | 6.4 MB; heap peak 7.9 MB | ~1–2 % |
-| MobileFaceNet | 160×160×3 | 4.46 / 4.71 / 4.8 ms | 221 | 4.2 MB; heap peak 4.3 MB | ~1–2 % |
+| **YOLOv5s** (COCO) | 640×640×3 | **81.1 / 81.8 / 92 ms** | **12.3** | 13.7 MB (weights 7.0 + internal 6.5); heap peak 16.9 MB | 2 % |
+| RetinaFace | 640×640×3 | 24.8 / 25.1 / 30 ms | 40.4 | 6.4 MB; heap peak 7.9 MB | 3 % |
+| MobileFaceNet | 160×160×3 | 4.41 / 4.43 / 8.7 ms | 227 | 4.2 MB; heap peak 4.3 MB | 3 % |
+
+Repeat runs agreed within 1 % (YOLOv5: 81.1–81.6 ms), whether the soak was uploading or downloading. NPU timing doesn't depend on CPU load.
 
 - `rknn_init` takes 40–130 ms. `rknn_run` blocks in the kernel, so the CPU stays free while the NPU works.
 - Pre-processing (resize/convert, e.g. on the RGA) and post-processing (box decoding, NMS) aren't included.
@@ -25,26 +27,36 @@ Measured on the board itself: RV1106G3, 256 MB, stock Luckfox SDK image plus the
 
 | Resolution | H.264 fps | H.265 fps | Media DMA memory | CPU of the process* |
 |---|---|---|---|---|
-| **2304×1296** (SC3336 native) | **39.0** | **37.0** | 19.6 MB | ~30 % |
-| 1920×1080 | 55.6 | 52.6 | 13.3 MB | — |
-| 1280×720 | 103 | 103 | 6.2 MB | — |
+| **2304×1296** (SC3336 native) | **39.3** (3 repeats incl. start-up: 38.2–38.4) | **37.2** | 19.6 MB | 30–32 % |
+| 1920×1080 | 55.0 | 53.4 | 13.3 MB | 30–32 % |
+| 1280×720 | 118 | 112 | 6.2 MB | 32–33 % |
+
+Measured during a soak *download* segment (~4 % background CPU), with exact timing (fps excludes the ~0.1–0.2 s start-up).
 
 \* Most of this is `mpi_enc_test` generating the frame on the CPU. With a camera, the frames arrive by DMA (VI → VENC bind).
+
+- **Background CPU load slows this test.** During a soak *upload* segment (ESP-Hosted `esp_TX` at ~28 % CPU), the same 1296p H.264 run gave ~35 fps instead of 38–39. The frame generation competes for the single core.
+- An earlier pass used a sampler with coarse timing, and its 720p figures (103 fps) were quantised. The numbers above replace it.
 
 - The rockit/RK_MPI path (`rk_mpi_venc_test`, what the camera apps use) at 2304×1296 runs at a fixed ~50 ms/frame (~20 fps) **whatever the codec or content**: the test tool sets the pace. Media memory 17.9 MB.
 - `mpi_enc_test -i <file>` fails (`mpp run failed ret -1`) on this build; without `-i` it generates frames.
 
-### Combined: YOLOv5 640 on the NPU + 2304×1296 encoding at once (`combined-bench.sh`, 20 s)
+### Combined: YOLOv5 640 on the NPU + 2304×1296 H.264 at once (`combined-bench.sh`, 20 s, 3 runs)
 
-| | H.264 | H.265 |
-|---|---|---|
-| YOLOv5 latency avg / p95 | 93.7 / 96.2 ms (**10.7/s**, −13 %) | 93.9 / 96.4 ms (10.6/s) |
-| Encoder fps | **31.4** (−19 %) | 30.7 |
-| Media DMA heap peak | **36.6 MB of 66 MB** | 36.6 MB |
-| MemAvailable drop | 3 MB | 3 MB |
-| SoC temperature | 55 → 64 °C | 62 → 69 °C |
+Run back to back with the solo runs inside one soak download segment (`logs/bench-rerun-download-segment-2026-10-12.txt`):
 
-Both engines share the DDR, so each slows down. Encoding still keeps up with the camera's 30 fps, but with little margin at 1296p.
+| | Solo | Combined (3 runs) | Change |
+|---|---|---|---|
+| YOLOv5 latency avg / p95 | 81.1 / 81.8 ms (12.3/s) | **95.7–95.8 / 97.8–98.1 ms (10.4/s)** | **+18 %** |
+| Encoder fps (incl. start-up) | 38.2–38.4 | **37.3–37.7** | −2 % |
+| Media DMA heap peak | 16.9 / 19.6 MB | **36.6 MB of 66 MB** | |
+| MemAvailable drop | 0.5 MB | 1.2–1.7 MB | |
+| SoC temperature | | 60 → 70 °C | |
+
+- The NPU loses ~18 % to shared-DDR contention; the encoder hardly notices.
+- An earlier combined run during a soak *upload* segment gave 94 ms and ~31 fps. That fps drop came from CPU contention with the Wi-Fi upload, not from the NPU.
+- At 1296p, ~37 fps alongside YOLOv5 leaves ~25 % margin over a 30 fps camera. But the real pipeline adds ISP/VI traffic on the same DDR, and the test frames came from the CPU. **Confirm with the camera attached.**
+- Runs were 20 s long on a bare board that was still warming (up to 70 °C). Sustained load, especially in a car, is still untested.
 
 ## RAM
 
@@ -60,7 +72,7 @@ ALPR budget (YOLOv5-class detector plus 1296p recording) uses ~37 MB of the 66 M
 
 ## CPU (single Cortex-A7)
 
-- NPU inference: ~1–2 %. Encoding: low, once the frames come from the camera by DMA.
+- NPU inference: 2–3 % of the CPU (`rknn_run` waits in the kernel). Encoding: expected to be low once the frames come from the camera by DMA; here ~30 % is the test generating its frames.
 - **Wi-Fi upload through ESP-Hosted is expensive:** while the soak sends ~2.7 Mbit/s, the driver's `esp_TX` thread uses ~28 % CPU, plus ~10 % softirq and ~4 % kworker. Downloads cost ~4 %. Avoid streaming video over this link; send events and crops.
 - Measuring CPU: an early version of `memwatch.sh` forked `awk`/`sed` for every sample and cost ~55 % CPU on its own. The current one reads with shell builtins only.
 

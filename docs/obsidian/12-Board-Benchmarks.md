@@ -18,10 +18,10 @@ Phase 2's "baseline numbers", measured **without a camera**. Scripts, the full t
 | Model (prebuilt, `luckfox_pico_rknn_example`) | Input | Avg / p95 | Per second | NPU memory |
 |---|---|---|---|---|
 | **YOLOv5s** | 640×640 | **81 / 82 ms** | **12.3** | 13.7 MB (7.0 weights + 6.5 internal) |
-| RetinaFace | 640×640 | 25 / 26 ms | 40 | 6.4 MB |
-| MobileFaceNet | 160×160 | 4.5 / 4.7 ms | 221 | 4.2 MB |
+| RetinaFace | 640×640 | 25 / 25 ms | 40 | 6.4 MB |
+| MobileFaceNet | 160×160 | 4.4 / 4.4 ms | 227 | 4.2 MB |
 
-- The CPU stays nearly free during inference (~1–2 %).
+- The CPU stays nearly free during inference (2–3 %). Repeat runs agree within 1 %, whatever the background CPU load.
 - Times exclude pre-processing (resize/RGA) and post-processing (decode, NMS).
 
 ## Encoder (MPP `mpi_enc_test`, 300 frames)
@@ -29,16 +29,19 @@ Phase 2's "baseline numbers", measured **without a camera**. Scripts, the full t
 | Resolution | H.264 | H.265 | Media memory |
 |---|---|---|---|
 | **2304×1296** (SC3336) | **39 fps** | **37 fps** | 19.6 MB |
-| 1920×1080 | 56 fps | 53 fps | 13.3 MB |
-| 1280×720 | 103 fps | 103 fps | 6.2 MB |
+| 1920×1080 | 55 fps | 53 fps | 13.3 MB |
+| 1280×720 | 118 fps | 112 fps | 6.2 MB |
 
-The rockit test tool (`rk_mpi_venc_test`) runs at a fixed ~20 fps whatever the codec or content. That limit is the tool, not the encoder.
+- Measured with exact timing during a soak download segment. Repeats gave 38.2–38.4 fps including start-up.
+- The test generates its frames on the CPU (~30 %). During a soak *upload* (Wi-Fi driver at ~28 % CPU) it drops to ~35 fps; a camera would feed frames by DMA instead.
+- The rockit test tool (`rk_mpi_venc_test`) runs at a fixed ~20 fps whatever the codec or content. That limit is the tool, not the encoder.
 
-## Both at once (YOLOv5 640 + 1296p encode, 20 s)
+## Both at once (YOLOv5 640 + 1296p H.264, 20 s, 3 runs back to back with solo runs)
 
-- **YOLOv5: 94 ms (10.7/s, −13 %)**
-- **Encoder: ~31 fps (−19 %)**. It still keeps up with a 30 fps camera, with little margin.
-- **Media heap peak 36.6 of 66 MB**; Linux `MemAvailable` −3 MB; up to 69 °C.
+- **YOLOv5: 96 ms (10.4/s), +18 %**: the NPU loses to shared-DDR contention.
+- **Encoder: 37.5 fps, −2 %**: it hardly notices. That leaves ~25 % margin over a 30 fps camera, but the real pipeline adds ISP traffic, so **confirm with the camera attached**.
+- **Media heap peak 36.6 of 66 MB**; Linux `MemAvailable` −1.5 MB; up to 70 °C. Runs were 20 s on a bare board, so sustained load is untested.
+- A first combined run during a soak upload gave ~31 fps. That drop was CPU contention with the Wi-Fi upload, not the NPU.
 
 ## RAM: where the 256 MB goes
 
