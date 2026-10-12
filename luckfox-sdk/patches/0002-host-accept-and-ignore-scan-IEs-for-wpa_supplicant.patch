@@ -1,0 +1,44 @@
+From: Luckfox ALPR build <noreply@localhost>
+Subject: [PATCH] host: accept (and ignore) scan IEs so wpa_supplicant can scan
+
+wiphy->max_scan_ie_len = 0 made nl80211_trigger_scan() reject every wpa_supplicant
+scan with -EINVAL: wpa_supplicant 2.10 always adds a 13-byte Extended Capabilities
+IE (7f 0b ...). iw scan worked because it sends no IEs. The ESP firmware builds
+its own probe requests, so advertise room for IEs and ignore them in cmd_scan_request().
+
+---
+diff --git a/host/esp_cfg80211.c b/host/esp_cfg80211.c
+index 727ce71..35fe416 100644
+--- a/host/esp_cfg80211.c
++++ b/host/esp_cfg80211.c
+@@ -1970,10 +1970,13 @@ int esp_add_wiphy(struct esp_adapter *adapter)
+ 		wiphy->n_cipher_suites = ARRAY_SIZE(esp_cipher_suites);
+ 	}
+ 
+-	/* ESP scan supports at most 1 SSID, no probe request IEs, and no scheduled scans */
++	/* ESP scan supports at most 1 SSID and no scheduled scans. Extra probe request IEs
++	 * (e.g. wpa_supplicant's Extended Capabilities) are accepted and ignored, because the
++	 * ESP builds its own probe requests. Advertising 0 here made nl80211 reject every
++	 * wpa_supplicant scan with -EINVAL (nl80211_trigger_scan: ie_len > max_scan_ie_len). */
+ 	wiphy->max_scan_ssids = 1;
+ 	/*	wiphy->max_match_sets = 10;*/
+-	wiphy->max_scan_ie_len = 0;
++	wiphy->max_scan_ie_len = 512;
+ 	wiphy->max_sched_scan_ssids = 0;
+ 	wiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
+ #ifdef CONFIG_PM
+diff --git a/host/esp_cmd.c b/host/esp_cmd.c
+index 9fb595e..1117c75 100644
+--- a/host/esp_cmd.c
++++ b/host/esp_cmd.c
+@@ -3289,8 +3289,8 @@ int cmd_scan_request(struct esp_wifi_device *priv, struct cfg80211_scan_request
+ 	}
+ 
+ 	if (request->ie && request->ie_len) {
+-		esp_err("Scan IEs not supported\n");
+-		return -EOPNOTSUPP;
++		/* Ignored: the ESP firmware builds its own probe requests. */
++		esp_dbg("Ignoring %zu bytes of scan IEs\n", (size_t)request->ie_len);
+ 	}
+ 
+ 	if (request->n_channels > 1) {

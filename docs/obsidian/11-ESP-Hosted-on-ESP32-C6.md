@@ -209,6 +209,26 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
   - Stress: 5 back-to-back scans gave 5, 8, 10, 10, 10 BSS with 0 errors. **r3** (fresh C6 reset) PASS again.
   - Bus: 4-bit, 9.9 MHz, `sd high-speed`, still without external pull-ups. The C6 runs the patched firmware (`NSEND_NSAMPLE` + internal pull-ups); whether the stock `NSEND_PSAMPLE` also works with the good wiring hasn't been A/B-tested yet.
   - **Lesson:** a single GND wire plus two supplies tied on one 5 V net corrupted host→C6 writes exactly when the C6's radio started. Use ≥2 GNDs, one power source per board (or one shared source), and decoupling.
+### Wi-Fi station, persistence, time (2026-10-12)
+
+- **Connected to `Repeater_2.4G_FA12D4`** (WPA2-PSK/CCMP): DHCP `192.168.1.139`, −51 dBm. The password is only on the board, as a WPA hash in `/userdata/esp-hosted/wpa_supplicant.conf` (mode 600).
+- Three problems fixed on the way:
+  1. `wpa_supplicant` scans failed with `-EINVAL`. ESP-Hosted advertises `max_scan_ie_len = 0`, and wpa_supplicant 2.10 always adds a 13-byte Extended Capabilities IE → **host patch 0002** (accept and ignore scan IEs). Also don't use `scan_ssid=1` (`max_scan_ssids = 1`).
+  2. Pings via `wlan0` got no replies: **ARP flux** with `eth0` on the same subnet → `arp_ignore=1`, `arp_announce=2` (in `/etc/sysctl.conf` and set by the service).
+  3. This `wpa_supplicant` build has no `-s` (syslog) → logs to `/var/log` (RAM).
+- **Persistent service:** `/userdata/esp-hosted/esp-hosted.sh` + `/etc/init.d/S45esp-hosted` (repo: `luckfox-sdk/board/`).
+  - **Start:** re-detects the SDIO card, loads the modules, starts `/usr/sbin/wpa_supplicant`; DHCP is the stock `dhcpcd`.
+  - **Watchdog** (every 30 s): reloads on a missing interface or a dead transport, and restarts `wpa_supplicant` if it died.
+  - **Stop:** unloads the driver (the C6 restarts → the next boot is clean).
+  - Tested: normal `reboot` → up on attempt 1; **`reboot -f`** (stale C6, no stop scripts) → attempt 1 fails, attempt 2 up, Wi-Fi at 47 s uptime.
+- **Time:** stock `ntpd -g` syncs from `pool.ntp.org`, matching the PC to the second. Kernel `CONFIG_RTC_HCTOSYS=y` + `CONFIG_RTC_SYSTOHC=y` (RTC kept in sync every 11 min). Timezone set to **`<+0530>-5:30`** (`/etc/TZ` + `/etc/profile`). RTC battery test (full power-off) pending.
+
+### Speed (2026-10-12, via the repeater)
+
+- **SDIO bus alone** (`raw_tp_mode`, no Wi-Fi): **≈35.3 Mbit/s Luckfox→C6, ≈34.2 Mbit/s C6→Luckfox**, steady at 10 MHz/4-bit. The bus is not the bottleneck.
+- **End to end over Wi-Fi** (iperf3 to the build PC, routed via `wlan0`): only **≈1.2–1.7 Mbit/s** (TCP and UDP). UDP is sender-limited with ~0.3 % loss, i.e. backpressure from the air side.
+- Suspects: the single-radio 2.4 GHz repeater (halves throughput) and air congestion (several ESP-CAMs streaming MJPEG nearby). Compare with a better AP.
+
 - Test loop: `scripts/test-luckfox-sdio.sh <name> [clock_hz]` (work folder) resets the C6 via COM4, re-detects the card on the Luckfox, loads the driver, runs `iw scan` and prints PASS/FAIL with both logs.
 - Handy for testing without a reboot: `rmmod esp32_sdio` → reset the C6 over COM4 (RTS) → `echo ff9a0000.mmc > /sys/bus/platform/drivers/dwmmc_rockchip/unbind` then `bind` (forces a re-detect) → `insmod`. Access: `ssh luckfox` (root@192.168.1.64).
 

@@ -1,0 +1,20 @@
+#!/bin/sh
+# /etc/init.d/S45esp-hosted: ESP32-C6 (ESP-Hosted, SDIO) Wi-Fi for the Luckfox Pico Max.
+# Runs after S41dhcpcd (DHCP) and before S49ntp. The service itself lives in /userdata/esp-hosted/.
+
+case "$1" in
+start)
+    # background: don't hold up the rest of the boot while the C6 links up
+    /userdata/esp-hosted/esp-hosted.sh start > /dev/null 2>&1 &
+    ;;
+stop)
+    /userdata/esp-hosted/esp-hosted.sh stop
+    ;;
+restart)
+    /userdata/esp-hosted/esp-hosted.sh restart
+    ;;
+*)
+    echo "usage: $0 start|stop|restart"
+    exit 1
+    ;;
+esac
