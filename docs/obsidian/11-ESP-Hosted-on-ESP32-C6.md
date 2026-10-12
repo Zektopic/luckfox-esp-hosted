@@ -261,7 +261,16 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
 **Software changes** (stopgaps; they don't fix the cause):
 - `esp-hosted.sh` sets `SDIO_MHZ=2` (driver `clockspeed=2`). Put it back to 10 once the wiring is right. `status` shows the clock.
 - **Watchdog bug fixed:** it counted `recover failed` lines in `dmesg`, but the ring buffer is small (about 190 lines) and old lines rotate out. After a run of errors, the count stayed at or below the saved baseline, so detection took about 2 min.
-  - It now compares kernel timestamps against the last load time: detection in **≤ 10 s** (checks every 10 s instead of 30 s). An outage is now about 20 s (detect + reload + associate + DHCP).
+  - It now compares kernel timestamps against the last load time: detection in **≤ 10 s** (checks every 10 s instead of 30 s).
+- **Measured after both changes** (5-min ping from the build PC, 11:00–11:05): **59 % loss**, with outages of **22, 25, 50 and 66 s**. Recoveries every 20–60 s chain into longer outages.
+  - **2 MHz did not noticeably help while the radio is active.** The stopgaps only shorten the outages; the cause is physical.
+  - RSSI also dropped from −48/−51 to −59/−62 dBm after the handling. The boards may have moved, so **RF coupling** (the C6 antenna end near the jumper wires) is a second suspect alongside ground bounce.
+
+**Pass/fail gate after the rework:**
+1. Stop the service.
+2. Run `rawtp-soak.sh 2 180` at the **default 10 MHz** (today: failed in 0.5 s; before: clean at 34 Mbit/s), then mode 1.
+3. Set `SDIO_MHZ=10`, restart the service, and ping for 10 min: require **0 watchdog recoveries**.
+4. Only then run the 3-h soak (on hold until this passes).
 
 - Test loop: `scripts/test-luckfox-sdio.sh <name> [clock_hz]` (work folder) resets the C6 via COM4, re-detects the card on the Luckfox, loads the driver, runs `iw scan` and prints PASS/FAIL with both logs.
 - Handy for testing without a reboot: `rmmod esp32_sdio` → reset the C6 over COM4 (RTS) → `echo ff9a0000.mmc > /sys/bus/platform/drivers/dwmmc_rockchip/unbind` then `bind` (forces a re-detect) → `insmod`. Access: `ssh luckfox` (root@192.168.1.64).

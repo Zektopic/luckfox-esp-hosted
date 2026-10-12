@@ -15,7 +15,8 @@ Turns an **ESP32-C6 SuperMini** into an **ESP-Hosted-Linux** Wi-Fi/BLE co-proces
   - ⚠️ **Since 2026-10-12 10:31, Wi-Fi drops every 10–80 s.** The SDIO CRC errors (`-84`) came back after the hardware was handled (USB-C/Ethernet replugged at 10:25–10:30).
     - The C6 doesn't crash: the errors follow radio activity and go away at lower clocks only when the radio is idle. That's the same power/ground signature as the original fault.
     - **Check the 2 GND wires, the capacitors and the joints.**
-    - Stopgaps in the service: SDIO clock `SDIO_MHZ=2`, and a watchdog that now notices a dead link in ≤ 10 s (it took about 2 min before).
+    - The service now runs the SDIO clock at `SDIO_MHZ=2`, and its watchdog notices a dead link in ≤ 10 s (it took about 2 min before). This is **not** a working fix: a 5-min ping still lost **59 %** (outages of 22–66 s).
+    - After the rework: pass the 10 MHz raw test plus a 10-min ping with 0 recoveries, then set `SDIO_MHZ=10` again.
     - Bus test: `ssh luckfox 'sh -s 2 180 [clock_hz]' < scripts/rawtp-soak.sh` (stop the service first).
   - Full history: [`docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md`](docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md).
 
