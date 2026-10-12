@@ -221,7 +221,8 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
   - **Watchdog** (every 30 s, now every 10 s): reloads on a missing interface or a dead transport, and restarts `wpa_supplicant` if it died.
   - **Stop:** unloads the driver (the C6 restarts → the next boot is clean).
   - Tested: normal `reboot` → up on attempt 1; **`reboot -f`** (stale C6, no stop scripts) → attempt 1 fails, attempt 2 up, Wi-Fi at 47 s uptime.
-- **Time:** stock `ntpd -g` syncs from `pool.ntp.org`, matching the PC to the second. Kernel `CONFIG_RTC_HCTOSYS=y` + `CONFIG_RTC_SYSTOHC=y` (RTC kept in sync every 11 min). Timezone set to **`<+0530>-5:30`** (`/etc/TZ` + `/etc/profile`). RTC battery test (full power-off) pending.
+- **Time:** stock `ntpd -g` syncs from `pool.ntp.org`, matching the PC to the second. Kernel `CONFIG_RTC_HCTOSYS=y` + `CONFIG_RTC_SYSTOHC=y` (RTC kept in sync every 11 min). Timezone set to **`<+0530>-5:30`** (`/etc/TZ` + `/etc/profile`).
+- ✅ **RTC battery works** (2026-10-12): after a full power-off (halted 13:26, powered back on 13:33), the kernel set the clock from the RTC at boot (`rockchip-rtc: setting system clock to 2026-10-12T08:03:47 UTC` = 13:33:47 local). The very first syslog line already had the right time, before any network, and `S99rtcinit` did not reset it to 2024-01-01. 4 min later the board, the RTC (`hwclock -u`) and the PC all agreed to the second, and ntpd needed no step.
 
 ### Speed (2026-10-12, via the repeater)
 
