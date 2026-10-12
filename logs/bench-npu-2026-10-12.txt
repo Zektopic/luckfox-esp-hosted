@@ -1,0 +1,21 @@
+npu-bench start 2026-10-12 12:39:42 npu_freq=420000000 armclk=1104MHz
+sdk 1.6.0 (2de554906@2024-01-17T14:53:41), driver 0.9.2
+input: images dims=[1,640,640,3] size_with_stride=1228800, 3 outputs
+NPU /tmp/yolov5.rknn: input 640x640x3, init 81 ms, 200 runs: avg 81.62 ms, min 80.82, p50 81.32, p95 82.72, max 83.20 => 12.2 inferences/s; runtime NPU time avg 0.00 ms; mem: weights 6.96 MB, internal 6.54 MB, total DMA 13.70 MB
+MEMWATCH npu yolov5: rc=0 wall=17.3s cpu_busy=52% memavail_drop=0.8MB dma_heap_peak=16.9MB rss_peak=0.8MB npu_load_peak=98% temp=54->60C
+sdk 1.6.0 (2de554906@2024-01-17T14:53:41), driver 0.9.2
+input: input.1 dims=[1,640,640,3] size_with_stride=1228800, 3 outputs
+NPU /tmp/RetinaFace.rknn: input 640x640x3, init 56 ms, 200 runs: avg 24.99 ms, min 24.68, p50 24.79, p95 25.65, max 26.26 => 39.9 inferences/s; runtime NPU time avg 0.00 ms; mem: weights 0.44 MB, internal 5.86 MB, total DMA 6.41 MB
+MEMWATCH npu RetinaFace: rc=0 wall=5.6s cpu_busy=58% memavail_drop=0.8MB dma_heap_peak=7.9MB rss_peak=0.8MB npu_load_peak=98% temp=61->60C
+sdk 1.6.0 (2de554906@2024-01-17T14:53:41), driver 0.9.2
+input: input.1 dims=[1,160,160,3] size_with_stride=76800, 1 outputs
+NPU /tmp/mobilefacenet.rknn: input 160x160x3, init 42 ms, 200 runs: avg 4.46 ms, min 4.37, p50 4.43, p95 4.71, max 4.79 => 221.1 inferences/s; runtime NPU time avg 0.00 ms; mem: weights 3.34 MB, internal 0.85 MB, total DMA 4.22 MB
+MEMWATCH npu mobilefacenet: rc=0 wall=1.0s cpu_busy=57% memavail_drop=0.2MB dma_heap_peak=4.3MB rss_peak=0.7MB npu_load_peak=87% temp=59->61C
+npu-bench end 2026-10-12 12:40:06
+(removed 600 lines 'E RKNN: rknn_query, unsupported cmd(4)!': RKNN_QUERY_PERF_RUN isn't supported by librknnmrt 1.6.0; the query was dropped from rknn_bench.c afterwards)
+
+re-run with the low-overhead memwatch.sh (proc_cpu = the benchmark's own CPU):
+NPU /tmp/yolov5.rknn: input 640x640x3, init 69 ms, 100 runs: avg 81.19 ms, min 80.73, p50 80.99, p95 82.28, max 88.14 => 12.3 inferences/s; mem: weights 6.96 MB, internal 6.54 MB, total DMA 13.70 MB
+MEMWATCH npu yolov5: rc=0 wall=8.6s proc_cpu=2% sys_cpu_busy=43% memavail_drop=0.8MB dma_heap_peak=16.9MB rss_peak=0.8MB npu_load_peak=98% temp=55->59C
+MEMWATCH h264 1296p: rc=0 wall=8.8s proc_cpu=30% sys_cpu_busy=62% memavail_drop=0.8MB dma_heap_peak=19.6MB rss_peak=1.3MB temp=59->61C
+MEMWATCH idle baseline (soak running, upload segment): sys_cpu_busy=44% (esp_TX ~28% + softirq ~10% + kworker ~4%)

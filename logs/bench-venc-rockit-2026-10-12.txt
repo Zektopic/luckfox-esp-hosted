@@ -1,0 +1,8 @@
+rk_mpi_venc_test (rockit / RK_MPI), 2304x1296 NV12 input file in /tmp, LD_LIBRARY_PATH=/oem/usr/lib
+(old memwatch.sh: cpu_busy includes ~55 % from the sampler itself)
+-n 300, noise frame, -o /tmp (writes test_0.bin): wall=17.1s dma_heap_peak=17.9MB rss_peak=2.1MB
+-n 300, noise frame, no -o:                       wall=17.1s dma_heap_peak=17.9MB rss_peak=2.1MB
+-n 150 H.264 flat gray frame: wall=9.1s   -n 150 H.265 flat gray frame: wall=9.1s
+-n 150 H.264 noise frame:     wall=9.1s   -n 150 H.265 noise frame:     wall=9.1s
+=> ~50 ms/frame (~20 fps) regardless of codec and content: paced by the test tool's send/get loop, not the encoder.
+mpi_enc_test -i /tmp/f1296.nv12 ... -> "mpi_enc_test test mpp run failed ret -1" (file input broken on this build).

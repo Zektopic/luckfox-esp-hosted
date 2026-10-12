@@ -1,0 +1,12 @@
+combined start 2026-10-12 12:43:01 secs=20 codec=7 res=2304x1296
+NPU /tmp/yolov5.rknn: input 640x640x3, init 127 ms, 214 runs: avg 93.71 ms, min 89.26, p50 93.83, p95 96.24, max 100.76 => 10.7 inferences/s; mem: weights 6.96 MB, internal 6.54 MB, total DMA 13.70 MB
+MEMWATCH npu yolov5 (with encoder): rc=0 wall=20.7s proc_cpu=1% sys_cpu_busy=75% memavail_drop=3.0MB dma_heap_peak=36.6MB rss_peak=0.8MB npu_load_peak=98% temp=57->64C
+MEMWATCH venc 2304x1296 t=7 (with NPU): rc=143 wall=22.0s proc_cpu=31% sys_cpu_busy=75% memavail_drop=2.9MB dma_heap_peak=36.6MB rss_peak=1.3MB npu_load_peak=98% temp=55->64C frames=691 fps=31.4
+MEMWATCH system (both running): rc=0 wall=22.0s proc_cpu=0% sys_cpu_busy=75% memavail_drop=2.9MB dma_heap_peak=36.6MB rss_peak=0.7MB npu_load_peak=98% temp=55->61C
+combined end 2026-10-12 12:43:24
+combined start 2026-10-12 12:43:24 secs=20 codec=16777220 res=2304x1296
+NPU /tmp/yolov5.rknn: input 640x640x3, init 120 ms, 213 runs: avg 93.93 ms, min 88.58, p50 94.02, p95 96.43, max 100.05 => 10.6 inferences/s; mem: weights 6.96 MB, internal 6.54 MB, total DMA 13.70 MB
+MEMWATCH npu yolov5 (with encoder): rc=0 wall=20.7s proc_cpu=1% sys_cpu_busy=72% memavail_drop=3.0MB dma_heap_peak=36.6MB rss_peak=0.8MB npu_load_peak=98% temp=62->69C
+MEMWATCH venc 2304x1296 t=16777220 (with NPU): rc=143 wall=21.9s proc_cpu=30% sys_cpu_busy=72% memavail_drop=3.2MB dma_heap_peak=36.6MB rss_peak=1.3MB npu_load_peak=98% temp=62->67C frames=673 fps=30.7
+MEMWATCH system (both running): rc=0 wall=22.0s proc_cpu=0% sys_cpu_busy=72% memavail_drop=3.0MB dma_heap_peak=36.6MB rss_peak=0.7MB npu_load_peak=98% temp=63->65C
+combined end 2026-10-12 12:43:46

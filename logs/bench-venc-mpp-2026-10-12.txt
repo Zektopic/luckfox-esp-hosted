@@ -1,0 +1,8 @@
+venc-bench start 2026-10-12 12:33:29 frames=300 armclk=1104MHz vepu=396MHz
+MEMWATCH h264 2304x1296: rc=0 wall=7.9s cpu_busy=51% memavail_drop=0.5MB dma_heap_peak=19.6MB rss_peak=1.3MB npu_load_peak=0% temp=54->58C fps=39.0 (init 0.2s) bitrate=4.5Mbit/s
+MEMWATCH h264 1920x1080: rc=0 wall=5.6s cpu_busy=51% memavail_drop=0.5MB dma_heap_peak=13.3MB rss_peak=1.3MB npu_load_peak=0% temp=56->58C fps=55.6 (init 0.2s) bitrate=3.2Mbit/s
+MEMWATCH h264 1280x720: rc=0 wall=3.0s cpu_busy=56% memavail_drop=0.5MB dma_heap_peak=6.2MB rss_peak=1.3MB npu_load_peak=0% temp=57->59C fps=103.4 (init 0.1s) bitrate=1.5Mbit/s
+MEMWATCH h265 2304x1296: rc=0 wall=8.3s cpu_busy=49% memavail_drop=0.6MB dma_heap_peak=19.6MB rss_peak=1.3MB npu_load_peak=0% temp=58->61C fps=37.0 (init 0.2s) bitrate=9.8Mbit/s
+MEMWATCH h265 1920x1080: rc=0 wall=5.8s cpu_busy=51% memavail_drop=0.6MB dma_heap_peak=13.3MB rss_peak=1.3MB npu_load_peak=0% temp=58->59C fps=52.6 (init 0.1s) bitrate=6.9Mbit/s
+MEMWATCH h265 1280x720: rc=0 wall=3.0s cpu_busy=52% memavail_drop=0.3MB dma_heap_peak=6.2MB rss_peak=1.3MB npu_load_peak=0% temp=60->59C fps=103.4 (init 0.1s) bitrate=2.9Mbit/s
+venc-bench end 2026-10-12 12:34:04

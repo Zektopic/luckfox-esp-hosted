@@ -88,7 +88,9 @@ It now sits waiting for a Linux SDIO host. **No `wlanX` exists yet**: that needs
 | `firmware/luckfox-pico-max/2026-10-11_stock/` | Stock Luckfox Pico Max `update.img`, the recovery fallback. |
 | `step2-luckfox/` | Step-2 prep for the Luckfox Pico Pro/Max: SDIO device-tree fragment + Luckfox's pinout image. |
 | `luckfox-sdk/` | **Step 2 build**: scripts that build the Luckfox Pico Max image (SDIO + cfg80211/BT + wpa_supplicant/iw) and `esp32_sdio.ko` on the Linux PC (`ssh luckfox-build`, Docker), plus build logs and the board loader. Built and checked 2026-10-11; **not flashed yet**. |
-| `logs/` | Setup, build, flash and boot logs from 2026-10-11. |
+| **`bench/`** | **Board benchmarks (2026-10-12)**: NPU (`npu/rknn_bench.c`), H.264/H.265 encoder (`venc-bench.sh`), the two combined (`combined-bench.sh`) and a low-overhead CPU/RAM/media-heap sampler (`memwatch.sh`). Results: [`bench/README.md`](bench/README.md). In short: YOLOv5 640 takes 81 ms; 1296p H.264 runs at 39 fps and H.265 at 37 fps; together they use 36.6 of the 66 MB media heap. |
+| `scripts/rawtp-soak.sh`, `scripts/soak-orchestrator.sh`, `luckfox-sdk/board/soak-monitor.sh` | SDIO raw-throughput test and the Wi-Fi soak (build PC ↔ Luckfox). |
+| `logs/` | Setup, build, flash, boot, Wi-Fi and benchmark logs. |
 
 ## Why esp-hosted-linux (and not esp-hosted master / NG)
 
