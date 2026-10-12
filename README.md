@@ -12,11 +12,14 @@ Turns an **ESP32-C6 SuperMini** into an **ESP-Hosted-Linux** Wi-Fi/BLE co-proces
   - Station mode works: WPA2 to `Repeater_2.4G_FA12D4`, DHCP, NTP. A boot service with a watchdog runs it (`luckfox-sdk/board/esp-hosted.sh`, `S45esp-hosted`).
     - Through the repeater: about 1.2–1.5 Mbit/s up and 0.5 Mbit/s down.
     - The SDIO bus alone: about 35 Mbit/s each way.
-  - ⚠️ **Since 2026-10-12 10:31, Wi-Fi drops every 10–80 s.** The SDIO CRC errors (`-84`) came back after the hardware was handled (USB-C/Ethernet replugged at 10:25–10:30).
-    - The C6 doesn't crash: the errors follow radio activity and go away at lower clocks only when the radio is idle. That's the same power/ground signature as the original fault.
-    - **Check the 2 GND wires, the capacitors and the joints.**
-    - The service now runs the SDIO clock at `SDIO_MHZ=2`, and its watchdog notices a dead link in ≤ 10 s (it took about 2 min before). This is **not** a working fix: a 5-min ping still lost **59 %** (outages of 22–66 s).
-    - After the rework: pass the 10 MHz raw test plus a 10-min ping with 0 recoveries, then set `SDIO_MHZ=10` again.
+  - ⚠️→✅ **2026-10-12, 10:31–11:11: Wi-Fi dropped every 20–60 s** (SDIO CRC `-84`, 59 % ping loss, even at 2 MHz).
+    - **Cause: the SDIO/GND jumper wires had moved next to the C6's antenna.** Its own transmitter coupled into the bus, so the errors followed radio activity.
+    - **Keep the wires away from the antenna end of the SuperMini.** Moving them fixed it at 10 MHz.
+    - Test after the fix: raw C6→host 3 min clean at 34.3 Mbit/s; real Wi-Fi 10 min with **0 errors and 0 recoveries**; up 1.8–2.7 Mbit/s, down 0.5 Mbit/s.
+    - Fixed on the way: the watchdog now notices a dead link in ≤ 10 s (it took about 2 min before).
+    - `SDIO_MHZ` in `esp-hosted.sh` sets the bus clock (10).
+    - Bus test: `ssh luckfox 'sh -s 2 180 [clock_hz]' < scripts/rawtp-soak.sh` (stop the service first).
+  - Open: the downlink is slow (0.5 Mbit/s; pings queue for seconds during downloads). Compare with another AP.
     - Bus test: `ssh luckfox 'sh -s 2 180 [clock_hz]' < scripts/rawtp-soak.sh` (stop the service first).
   - Full history: [`docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md`](docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md).
 

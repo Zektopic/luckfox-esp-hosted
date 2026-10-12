@@ -266,7 +266,22 @@ The Max was flashed with the new image and the C6 SuperMini wired to pins 21–2
   - **2 MHz did not noticeably help while the radio is active.** The stopgaps only shorten the outages; the cause is physical.
   - RSSI also dropped from −48/−51 to −59/−62 dBm after the handling. The boards may have moved, so **RF coupling** (the C6 antenna end near the jumper wires) is a second suspect alongside ground bounce.
 
-**Pass/fail gate after the rework:**
+✅ **Fixed (11:11): the SDIO/GND jumper wires had ended up next to the C6's antenna.** The user moved them away; Wi-Fi has been stable since. Cause: **RF coupling** from the C6's own transmitter into the bus wires. That's why the errors followed radio activity and why a lower clock barely helped.
+
+Gate results at **10 MHz** (logs in `logs/rawtp-soak-fixed-*`, `logs/gate-10mhz-2026-10-12/`):
+- **Raw C6→host, 3 min:** 0 errors, a steady **34.3 Mbit/s** (it failed in 0.5 s before the fix).
+- **Raw host→C6:** 0 CRC errors, **35.3 Mbit/s**, but each run ended after 11–17 s from a test-mode quirk, not the bus.
+  - dhcpcd puts an address on the test interface, the driver sends a "set IP" command the busy C6 can't answer, and after the timeout the driver resets the C6.
+  - `rawtp-soak.sh` now runs `dhcpcd -x` on the interface, but dhcpcd's IPv4LL still beat it once.
+- **Real Wi-Fi, 10 min** (iperf3 in 2-min segments alternating up/down, ping every second):
+  - **0 `-84`, 0 watchdog recoveries**; `wlan0` stayed `COMPLETED` throughout. RSSI −40 to −61 dBm, 52–54 °C.
+  - Up: **1.8–2.7 Mbit/s** (better than the 1.2–1.5 measured before). Down: **0.49 Mbit/s**; one down segment failed (iperf3 couldn't finish).
+  - Ping: 18 % loss, all of it **during download segments**, with RTT up to 23 s: the downlink queue fills behind a 0.5 Mbit/s link (bufferbloat at the repeater). Idle RTT is 2–6 ms.
+- `SDIO_MHZ` is back at **10**.
+- Still open: the **slow downlink** (0.5 vs 2+ Mbit/s up). The C6 console shows the AP adding and deleting RX block-ack sessions every ~2 s (`<ba-add>`/`<ba-del>` on tid 0 and 6). Compare with another AP.
+- 3-h soak started at 11:37 (600-s segments, up/down alternating).
+
+**Pass/fail gate after the rework** (used above):
 1. Stop the service.
 2. Run `rawtp-soak.sh 2 180` at the **default 10 MHz** (today: failed in 0.5 s; before: clean at 34 Mbit/s), then mode 1.
 3. Set `SDIO_MHZ=10`, restart the service, and ping for 10 min: require **0 watchdog recoveries**.

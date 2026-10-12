@@ -24,7 +24,10 @@ MARK="rawtp-soak mode=$MODE secs=$SECS clock=${CLOCK:-default} $(date +%s)"
 logger -t rawtp "$MARK"
 echo "== $MARK, host $H"
 insmod /userdata/esp-hosted/esp32_sdio.ko raw_tp_mode=$MODE radio_service=none
-sleep 3
+# keep dhcpcd off the test interface: an address on it makes the driver send a "set IP" command the
+# C6 can't answer while it is busy with raw throughput -> command timeout -> the driver resets the C6
+sleep 1; IF=$(ls /sys/class/net | grep -m1 '^wlan'); [ -n "$IF" ] && dhcpcd -x "$IF" > /dev/null 2>&1
+sleep 2
 echo "== bus: $(grep -E '^(actual clock|bus width|timing spec)' /sys/kernel/debug/$H/ios | tr -s '\t' ' ' | tr '\n' ' ')"
 sleep "$SECS"
 rmmod esp32_sdio

@@ -1,0 +1,4 @@
+== rawtp-soak mode=1 secs=180 clock=default 1791784281, host mmc2
+== bus: actual clock: 9900000 Hz bus width: 2 (4 bits) timing spec: 2 (sd high-speed) 
+== errors -84: 0  -110: 0  recover failed: 0
+== first error: 

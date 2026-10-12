@@ -19,10 +19,10 @@ DRV=/sys/bus/platform/drivers/dwmmc_rockchip
 WATCHDOG_PID=/var/run/esp-hosted-watchdog.pid
 CHECK_EVERY=10          # seconds between watchdog checks
 # SDIO bus clock in whole MHz (driver parameter "clockspeed"; the Device Tree allows up to 10).
-# 10 MHz ran clean until the wiring was disturbed on 2026-10-12, then gave CRC errors (-84)
-# within seconds at 10 and 5 MHz while ~2.4 MHz ran clean. Wi-Fi via the repeater needs < 2 Mbit/s,
-# 2 MHz x 4 bits still carries ~7 Mbit/s. Raise again once the wiring is fixed.
-SDIO_MHZ=2
+# If CRC errors (-84) show up while the radio is busy, check the wiring first: on 2026-10-12 SDIO
+# wires routed near the C6's antenna made Wi-Fi drop every 20-60 s even at 2 MHz; moving them away
+# fixed it at 10 MHz. A lower clock (e.g. 2 = ~7 Mbit/s raw) is only a stopgap.
+SDIO_MHZ=10
 
 log() {
     echo "$(date '+%F %T') $*" >> "$LOG"
