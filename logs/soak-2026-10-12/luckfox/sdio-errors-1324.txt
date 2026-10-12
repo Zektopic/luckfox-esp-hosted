@@ -1,0 +1,28 @@
+Oct 12 13:24:04 luckfox kern.info kernel: [27537.510815] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:04 luckfox kern.info kernel: [27537.518638] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:05 luckfox kern.info kernel: [27538.080795] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:05 luckfox kern.info kernel: [27538.088617] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:06 luckfox kern.info kernel: [27539.630735] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:06 luckfox kern.info kernel: [27539.638612] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:08 luckfox kern.err kernel: [27540.984667] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-84 line=242
+Oct 12 13:24:08 luckfox kern.info kernel: [27541.490658] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:08 luckfox kern.info kernel: [27541.498487] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:09 luckfox kern.err kernel: [27542.730760] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-84 line=242
+Oct 12 13:24:10 luckfox kern.info kernel: [27543.240618] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:10 luckfox kern.info kernel: [27543.248476] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:11 luckfox kern.info kernel: [27544.500542] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:11 luckfox kern.info kernel: [27544.508366] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:12 luckfox kern.err kernel: [27545.023160] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-84 line=242
+Oct 12 13:24:12 luckfox kern.info kernel: [27545.280551] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:12 luckfox kern.info kernel: [27545.288413] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:15 luckfox kern.err kernel: [27548.888298] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-84 line=242
+Oct 12 13:24:16 luckfox kern.info kernel: [27549.390356] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:16 luckfox kern.info kernel: [27549.398179] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:16 luckfox kern.err kernel: [27549.420500] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-84 line=242
+Oct 12 13:24:17 luckfox kern.info kernel: [27549.930334] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:17 luckfox kern.info kernel: [27549.938165] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:18 luckfox kern.info kernel: [27551.460306] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:18 luckfox kern.info kernel: [27551.468307] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored
+Oct 12 13:24:26 luckfox kern.err kernel: [27559.730165] esp32_sdio: esp_handle_isr: ESP_SDIO_CMD53_ERROR: ret=-84 line=242
+Oct 12 13:24:27 luckfox kern.info kernel: [27560.240033] esp32_sdio: esp_fw_recovery_work: Transport recovery: transport resync
+Oct 12 13:24:27 luckfox kern.info kernel: [27560.256988] esp32_sdio: esp_fw_recovery_work: Transport recovery: existing session restored

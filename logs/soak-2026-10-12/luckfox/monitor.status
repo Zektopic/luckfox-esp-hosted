@@ -1,0 +1,5 @@
+monitor start 2026-10-12 05:51:17 +0530 peer=192.168.1.9
+monitor done 2026-10-12 05:53:17 +0530
+monitor start 2026-10-12 11:25:42 +0530 peer=192.168.1.9
+monitor start 2026-10-12 11:37:40 +0530 peer=192.168.1.9
+monitor stopped by user 2026-10-12 13:24:28 +0530

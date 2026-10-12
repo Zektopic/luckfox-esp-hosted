@@ -20,6 +20,8 @@ Turns an **ESP32-C6 SuperMini** into an **ESP-Hosted-Linux** Wi-Fi/BLE co-proces
     - `SDIO_MHZ` in `esp-hosted.sh` sets the bus clock (10).
     - Bus test: `ssh luckfox 'sh -s 2 180 [clock_hz]' < scripts/rawtp-soak.sh` (stop the service first).
   - Open: the downlink is slow (0.5 Mbit/s; pings queue for seconds during downloads). Compare with another AP.
+  - **Soak, 1 h 47 min (stopped early):** 0 Wi-Fi drops; ≈910 MB up at 1.7–2.8 Mbit/s and ≈230 MB down at ≈0.55 Mbit/s; 46–67 °C; no memory creep. Logs: `logs/soak-2026-10-12/`.
+  - To switch the board off, use **`halt`**, then unplug. `poweroff` just reboots this board.
     - Bus test: `ssh luckfox 'sh -s 2 180 [clock_hz]' < scripts/rawtp-soak.sh` (stop the service first).
   - Full history: [`docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md`](docs/obsidian/11-ESP-Hosted-on-ESP32-C6.md).
 

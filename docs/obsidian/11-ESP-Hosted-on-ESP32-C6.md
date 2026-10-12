@@ -279,7 +279,24 @@ Gate results at **10 MHz** (logs in `logs/rawtp-soak-fixed-*`, `logs/gate-10mhz-
   - Ping: 18 % loss, all of it **during download segments**, with RTT up to 23 s: the downlink queue fills behind a 0.5 Mbit/s link (bufferbloat at the repeater). Idle RTT is 2–6 ms.
 - `SDIO_MHZ` is back at **10**.
 - Still open: the **slow downlink** (0.5 vs 2+ Mbit/s up). The C6 console shows the AP adding and deleting RX block-ack sessions every ~2 s (`<ba-add>`/`<ba-del>` on tid 0 and 6). Compare with another AP.
-- 3-h soak started at 11:37 (600-s segments, up/down alternating).
+- 3-h soak started at 11:37; stopped at 13:24 (see "Soak test" below).
+
+### Soak test (2026-10-12, 11:37–13:24, stopped early by me at 1 h 47 min)
+
+The build PC ran iperf3 TCP against the Luckfox over `wlan0` in 10-min segments, alternating up and down; the Luckfox logged its health every minute. Logs: `logs/soak-2026-10-12/` in the repo.
+
+| | Up (Luckfox → LAN) | Down (LAN → Luckfox) |
+|---|---|---|
+| Segments | 5 full + 1 partial | 5 |
+| Throughput per segment | 1.73, 1.87, 2.72, 2.81, 2.57 Mbit/s (avg ≈ 2.3) | 0.52–0.57 Mbit/s (steady) |
+| Data moved | **≈ 910 MB** | **≈ 230 MB** |
+
+- **Wi-Fi never dropped:** `wpa_state=COMPLETED` in all 106 one-minute samples, 0 watchdog reloads.
+- Board health: RSSI −71 to −41 dBm, 46–67 °C (the peak was during the benchmarks), `MemAvailable` 130–150 MB with no downward trend.
+- Three download segments are marked `fail` in `results.csv`, but the interval lines show steady data (42–50 MB each). Only iperf3's final results exchange timed out, queued behind the full downlink buffer. Totals above come from the interval lines.
+- **SDIO:** 0 errors from 11:25 to 13:24. At **13:24:04–13:24:27**, 6 CRC errors (`-84`) appeared just as I was getting ready to switch the board off. **The driver recovered every one by itself** (`Transport recovery: … existing session restored`), with no watchdog reload and no disconnect. The board was probably handled; if it happens again without anyone touching it, look at the wiring.
+- The benchmarks ([[12-Board-Benchmarks]]) overlapped segments 6–8 (12:33–12:52). Upload segments cost ~45 % CPU (`esp_TX` ~28 %).
+- **Shutdown:** `poweroff` *reboots* this board (it can't cut its own power). Use **`halt`**, wait for it to stop answering ping, then unplug.
 
 **Pass/fail gate after the rework** (used above):
 1. Stop the service.

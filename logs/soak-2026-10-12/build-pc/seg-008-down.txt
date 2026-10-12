@@ -1,0 +1,14 @@
+warning: Failed to read JSON data size - read returned 0; errno=0
+Connecting to host 192.168.1.139, port 5201
+[  5] local 192.168.1.9 port 46792 connected to 192.168.1.139 port 5201
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-60.10  sec  6.62 MBytes  0.92 Mbits/sec    1   1.04 MBytes       
+[  5]  60.10-120.10 sec  4.00 MBytes  0.56 Mbits/sec    1   1.04 MBytes       
+[  5] 120.10-180.10 sec  2.75 MBytes  0.38 Mbits/sec    0   1.04 MBytes       
+[  5] 180.10-240.10 sec  4.50 MBytes  0.63 Mbits/sec    1   1.04 MBytes       
+[  5] 240.10-300.10 sec  2.75 MBytes  0.38 Mbits/sec    2   1.04 MBytes       
+[  5] 300.10-360.10 sec  4.12 MBytes  0.58 Mbits/sec    1   1.04 MBytes       
+[  5] 360.10-420.10 sec  4.12 MBytes  0.58 Mbits/sec    1   1.04 MBytes       
+[  5] 420.10-480.10 sec  2.88 MBytes  0.40 Mbits/sec    1   1.04 MBytes       
+[  5] 480.10-540.10 sec  2.75 MBytes  0.38 Mbits/sec    2   1.04 MBytes       
+iperf3: error - unable to receive results: 
